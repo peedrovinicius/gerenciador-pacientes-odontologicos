@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Pedro Vinícius - Pacientes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caladea&family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            max-width: 600px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            background-color: #f9f9f9;
+        }
+        h1 { 
+            font-family: 'EB Garamond', serif; 
+            color: #2c3e50; 
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+        }
+        div, ul, button, input { 
+            font-family: 'Caladea', serif; 
+            font-size: 18px; 
+        }
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input { 
+            padding: 10px; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button { 
+            padding: 10px; 
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; 
+        }
+        button:hover { background-color: #1a252f; }
+        ul { list-style-type: none; padding: 0; }
+        li {
+            background: white;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Procedimentos</h1>
+    
+    <div class="formulario">
+        <input type="text" id="nome" placeholder="Nome do Paciente">
+        <input type="text" id="procedimento" placeholder="Procedimento realizado">
+        <button onclick="salvarPaciente()">Salvar Ficha</button>
+    </div>
+    
+    <ul id="lista"></ul>
+
+    <script>
+        async function carregarPacientes() {
+            const resposta = await fetch('/api/pacientes');
+            const pacientes = await resposta.json();
+            const lista = document.getElementById('lista');
+            lista.innerHTML = '';
+            pacientes.forEach(p => {
+                lista.innerHTML += `<li><strong>${p.nome}</strong><br>Procedimento: ${p.procedimento}</li>`;
+            });
+        }
+
+        async function salvarPaciente() {
+            const nome = document.getElementById('nome').value;
+            const procedimento = document.getElementById('procedimento').value;
+
+            if(!nome || !procedimento) return alert("Preencha todos os campos!");
+
+            await fetch('/api/pacientes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, procedimento })
+            });
+
+            document.getElementById('nome').value = '';
+            document.getElementById('procedimento').value = '';
+            carregarPacientes();
+        }
+
+        carregarPacientes();
+    </script>
+</body>
+</html>
