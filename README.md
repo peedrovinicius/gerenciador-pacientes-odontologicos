@@ -23,6 +23,13 @@ O projeto foi desenvolvido como uma aplicação prática para estudo de desenvol
 - Node.js
 - Express
 
+## Como executar
+
+1. Instale o [Node.js](https://nodejs.org/).
+2. Clone este repositório:
+   ```bash
+   git clone https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos.git
+
 ## Estrutura do projeto
 
 O projeto possui uma interface localizada na pasta `public` e um servidor desenvolvido em Node.js no arquivo `server.js`.
