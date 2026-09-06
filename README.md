@@ -26,9 +26,16 @@ O projeto foi desenvolvido como uma aplicação prática para estudo de desenvol
 ## Como executar
 
 1. Instale o [Node.js](https://nodejs.org/).
-2. Clone este repositório:
-   ```bash
-   git clone https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos.git
+2. Abra o terminal.
+3. Clone o repositório com:
+   `git clone https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos.git`
+4. Entre na pasta do projeto:
+   `cd gerenciador-pacientes-odontologicos`
+5. Instale as dependências:
+   `npm install`
+6. Inicie o servidor:
+   `node server.js`
+7. Abra no navegador o endereço indicado pelo servidor.
 
 ## Estrutura do projeto
 
