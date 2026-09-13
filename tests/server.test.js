@@ -105,6 +105,62 @@ test('rejeita cadastro inválido pela API', async () => {
     assert.equal(pacientes.length, 0);
 });
 
+test('atualiza um paciente existente pela API', async () => {
+    const createResponse = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Maria Silva', procedimento: 'Limpeza' }),
+    });
+    const paciente = await createResponse.json();
+
+    const updateResponse = await fetch(`${baseUrl}/api/pacientes/${paciente.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Maria Santos', procedimento: 'Restauração' }),
+    });
+    const atualizado = await updateResponse.json();
+
+    assert.equal(updateResponse.status, 200);
+    assert.equal(atualizado.id, paciente.id);
+    assert.equal(atualizado.nome, 'Maria Santos');
+    assert.equal(atualizado.procedimento, 'Restauração');
+    assert.equal(atualizado.criadoEm, paciente.criadoEm);
+    assert.equal(pacientes.length, 1);
+});
+
+test('rejeita atualização inválida pela API', async () => {
+    const createResponse = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Maria Silva', procedimento: 'Limpeza' }),
+    });
+    const paciente = await createResponse.json();
+
+    const updateResponse = await fetch(`${baseUrl}/api/pacientes/${paciente.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Maria Silva' }),
+    });
+    const body = await updateResponse.json();
+
+    assert.equal(updateResponse.status, 400);
+    assert.equal(body.erro, 'Nome e procedimento são obrigatórios.');
+    assert.equal(pacientes[0].nome, 'Maria Silva');
+    assert.equal(pacientes[0].procedimento, 'Limpeza');
+});
+
+test('retorna 404 ao tentar atualizar paciente inexistente', async () => {
+    const response = await fetch(`${baseUrl}/api/pacientes/id-inexistente`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Maria Silva', procedimento: 'Limpeza' }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 404);
+    assert.equal(body.erro, 'Paciente não encontrado.');
+});
+
 test('remove um paciente existente pela API', async () => {
     const createResponse = await fetch(`${baseUrl}/api/pacientes`, {
         method: 'POST',
