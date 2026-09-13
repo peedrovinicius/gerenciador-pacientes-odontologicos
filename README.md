@@ -4,7 +4,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
-Aplicação web para cadastro e consulta de registros odontológicos, desenvolvida com **HTML, CSS, JavaScript, Node.js e Express**.
+Aplicação web para cadastro, consulta, edição e exclusão de registros odontológicos, desenvolvida com **HTML, CSS, JavaScript, Node.js e Express**.
 
 ## Acesse o projeto
 
@@ -12,20 +12,22 @@ Aplicação web para cadastro e consulta de registros odontológicos, desenvolvi
 
 ## Sobre o projeto
 
-O projeto simula um fluxo simples de atendimento: a interface envia os dados de um paciente para uma API, o servidor valida a entrada e mantém os registros em memória, e a interface consulta e apresenta os dados cadastrados.
+O projeto simula um fluxo simples de atendimento: a interface envia dados para uma API, o servidor valida as entradas e mantém os registros em memória, enquanto a interface consulta, edita e exclui os registros cadastrados.
 
-O objetivo é demonstrar, de forma prática, a integração entre **frontend e backend**, criação de rotas HTTP, validação de dados e testes automatizados.
+O objetivo é demonstrar, de forma prática, a integração entre **frontend e backend**, operações HTTP, validação de dados, manipulação segura do DOM, testes automatizados e integração contínua.
 
 ## Funcionalidades
 
 - cadastro de paciente e procedimento;
 - consulta dos registros cadastrados;
-- validação dos campos obrigatórios;
+- edição de registros existentes;
+- exclusão de registros com confirmação;
+- validação dos campos obrigatórios e dos tipos recebidos;
 - limite de tamanho para os dados recebidos;
 - geração de identificador único e data de criação;
 - mensagens de sucesso e erro no frontend;
 - endpoint de health check;
-- resposta `404` para recursos inexistentes.
+- respostas HTTP adequadas para sucesso, erro de validação e recurso inexistente.
 
 ## Arquitetura
 
@@ -40,9 +42,11 @@ Frontend (HTML/CSS/JavaScript)
    ▼
 API Node.js + Express
    │
-   ├── GET  /api/health
-   ├── GET  /api/pacientes
-   └── POST /api/pacientes
+   ├── GET    /api/health
+   ├── GET    /api/pacientes
+   ├── POST   /api/pacientes
+   ├── PUT    /api/pacientes/:id
+   └── DELETE /api/pacientes/:id
    │
    ▼
 Memória da aplicação
@@ -77,13 +81,19 @@ Recebe um objeto JSON com:
 }
 ```
 
-Em caso de sucesso, a API retorna `201 Created` com o registro criado, incluindo `id` e `criadoEm`.
+Em caso de sucesso, retorna `201 Created` com o registro criado, incluindo `id` e `criadoEm`. Entradas inválidas retornam `400 Bad Request`.
 
-Entradas inválidas retornam `400 Bad Request`.
+### `PUT /api/pacientes/:id`
+
+Atualiza nome e procedimento de um registro existente. Mantém o `id` e a data original de criação. Retorna `200 OK` em caso de sucesso, `400 Bad Request` para dados inválidos e `404 Not Found` quando o registro não existe.
+
+### `DELETE /api/pacientes/:id`
+
+Remove um registro existente. Retorna `204 No Content` em caso de sucesso e `404 Not Found` quando o registro não existe.
 
 ## Segurança e validação
 
-O backend não confia diretamente no corpo recebido. Antes de criar um registro, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON também possui limite de `10kb`.
+O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON também possui limite de `10kb`.
 
 No frontend, os dados retornados pela API são inseridos no DOM com `textContent` e elementos criados via JavaScript, evitando a interpolação direta de conteúdo recebido em `innerHTML`.
 
@@ -104,6 +114,8 @@ Os testes podem ser executados localmente com:
 ```bash
 npm test
 ```
+
+A suíte cobre validação dos dados e os principais fluxos da API, incluindo cadastro, atualização e exclusão, além dos cenários de erro correspondentes.
 
 A CI executa automaticamente:
 
@@ -159,8 +171,9 @@ npm start
 - os dados são armazenados apenas em memória;
 - não há autenticação ou autorização;
 - o projeto não possui banco de dados;
-- o escopo atual é um protótipo funcional para estudo de integração frontend/backend.
+- não deve ser utilizado como sistema clínico de produção;
+- o escopo é um projeto educacional para demonstrar integração frontend/backend.
 
 ## Próximas evoluções
 
-A evolução natural do projeto seria separar a persistência da aplicação e adicionar operações de edição, exclusão e busca, mantendo a API como camada de acesso aos dados.
+Uma evolução natural seria adicionar persistência em banco de dados e busca de registros, mantendo a API como camada de acesso aos dados.
