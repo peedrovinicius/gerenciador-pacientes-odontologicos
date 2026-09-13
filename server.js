@@ -60,6 +60,27 @@ app.post('/api/pacientes', (req, res) => {
     return res.status(201).json(paciente);
 });
 
+app.put('/api/pacientes/:id', (req, res) => {
+    const indice = pacientes.findIndex((paciente) => paciente.id === req.params.id);
+
+    if (indice === -1) {
+        return res.status(404).json({ erro: 'Paciente não encontrado.' });
+    }
+
+    const validation = validatePaciente(req.body);
+
+    if (!validation.valid) {
+        return res.status(400).json({ erro: validation.error });
+    }
+
+    pacientes[indice] = {
+        ...pacientes[indice],
+        ...validation.data,
+    };
+
+    return res.status(200).json(pacientes[indice]);
+});
+
 app.delete('/api/pacientes/:id', (req, res) => {
     const indice = pacientes.findIndex((paciente) => paciente.id === req.params.id);
 
