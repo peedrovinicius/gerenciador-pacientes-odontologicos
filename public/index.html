@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema web para cadastro e consulta de registros odontológicos.">
+    <meta name="description" content="Sistema web para cadastro, consulta, edição e exclusão de registros odontológicos.">
     <title>Gerenciador de Pacientes Odontológicos</title>
     <style>
         :root {
@@ -23,9 +23,12 @@
         label { font-weight: 700; }
         input { width: 100%; margin-top: 6px; padding: 12px; border: 1px solid #cbd5df; border-radius: 8px; font: inherit; }
         input:focus { outline: 2px solid #7da0c1; outline-offset: 1px; }
+        .acoes-formulario { display: flex; gap: 10px; flex-wrap: wrap; }
         button { padding: 10px 14px; border: 0; border-radius: 8px; background: #243447; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
         button:disabled { opacity: 0.7; cursor: wait; }
+        .botao-cancelar { background: #6b7785; }
         .botao-excluir { background: #8b2c2c; margin-top: 10px; }
+        .botao-editar { margin-top: 10px; margin-right: 8px; }
         #mensagem { min-height: 24px; margin: 0; }
         .lista { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
         .paciente { border: 1px solid #e1e7ed; border-radius: 10px; padding: 16px; }
@@ -38,7 +41,7 @@
     <main>
         <header class="cabecalho">
             <h1>Gerenciador de Pacientes Odontológicos</h1>
-            <p class="subtitulo">Cadastro, consulta e exclusão de procedimentos registrados.</p>
+            <p class="subtitulo">Cadastro, consulta, edição e exclusão de procedimentos registrados.</p>
         </header>
 
         <section class="cartao" aria-labelledby="titulo-formulario">
@@ -52,7 +55,10 @@
                     <label for="procedimento">Procedimento realizado</label>
                     <input id="procedimento" name="procedimento" type="text" maxlength="200" required>
                 </div>
-                <button id="botao-salvar" type="submit">Salvar registro</button>
+                <div class="acoes-formulario">
+                    <button id="botao-salvar" type="submit">Salvar registro</button>
+                    <button id="botao-cancelar" class="botao-cancelar" type="button" hidden>Cancelar edição</button>
+                </div>
                 <p id="mensagem" role="status" aria-live="polite"></p>
             </form>
         </section>
@@ -68,6 +74,11 @@
         const lista = document.getElementById('lista');
         const mensagem = document.getElementById('mensagem');
         const botaoSalvar = document.getElementById('botao-salvar');
+        const botaoCancelar = document.getElementById('botao-cancelar');
+        const campoNome = document.getElementById('nome');
+        const campoProcedimento = document.getElementById('procedimento');
+
+        let pacienteEmEdicao = null;
 
         function criarRegistro(paciente) {
             const item = document.createElement('li');
@@ -79,13 +90,19 @@
             const procedimento = document.createElement('p');
             procedimento.textContent = `Procedimento: ${paciente.procedimento}`;
 
+            const botaoEditar = document.createElement('button');
+            botaoEditar.type = 'button';
+            botaoEditar.className = 'botao-editar';
+            botaoEditar.textContent = 'Editar';
+            botaoEditar.addEventListener('click', () => iniciarEdicao(paciente));
+
             const botaoExcluir = document.createElement('button');
             botaoExcluir.type = 'button';
             botaoExcluir.className = 'botao-excluir';
             botaoExcluir.textContent = 'Excluir';
             botaoExcluir.addEventListener('click', () => excluirPaciente(paciente.id, botaoExcluir));
 
-            item.append(nome, procedimento, botaoExcluir);
+            item.append(nome, procedimento, botaoEditar, botaoExcluir);
             return item;
         }
 
@@ -101,6 +118,24 @@
             }
 
             pacientes.forEach((paciente) => lista.appendChild(criarRegistro(paciente)));
+        }
+
+        function iniciarEdicao(paciente) {
+            pacienteEmEdicao = paciente.id;
+            campoNome.value = paciente.nome;
+            campoProcedimento.value = paciente.procedimento;
+            botaoSalvar.textContent = 'Salvar alterações';
+            botaoCancelar.hidden = false;
+            mensagem.textContent = 'Editando registro.';
+            campoNome.focus();
+        }
+
+        function cancelarEdicao() {
+            pacienteEmEdicao = null;
+            formulario.reset();
+            botaoSalvar.textContent = 'Salvar registro';
+            botaoCancelar.hidden = true;
+            mensagem.textContent = '';
         }
 
         async function carregarPacientes() {
@@ -131,6 +166,7 @@
                     throw new Error(resultado.erro || 'Não foi possível excluir o registro.');
                 }
 
+                if (pacienteEmEdicao === id) cancelarEdicao();
                 mensagem.textContent = 'Registro excluído com sucesso.';
                 await carregarPacientes();
             } catch (erro) {
@@ -145,10 +181,15 @@
             botaoSalvar.disabled = true;
 
             const dados = Object.fromEntries(new FormData(formulario));
+            const editando = pacienteEmEdicao !== null;
+            const url = editando
+                ? `/api/pacientes/${encodeURIComponent(pacienteEmEdicao)}`
+                : '/api/pacientes';
+            const method = editando ? 'PUT' : 'POST';
 
             try {
-                const resposta = await fetch('/api/pacientes', {
-                    method: 'POST',
+                const resposta = await fetch(url, {
+                    method,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dados),
                 });
@@ -157,7 +198,12 @@
                 if (!resposta.ok) throw new Error(resultado.erro || 'Não foi possível salvar o registro.');
 
                 formulario.reset();
-                mensagem.textContent = 'Registro salvo com sucesso.';
+                pacienteEmEdicao = null;
+                botaoSalvar.textContent = 'Salvar registro';
+                botaoCancelar.hidden = true;
+                mensagem.textContent = editando
+                    ? 'Registro atualizado com sucesso.'
+                    : 'Registro salvo com sucesso.';
                 await carregarPacientes();
             } catch (erro) {
                 mensagem.textContent = erro.message;
@@ -166,6 +212,7 @@
             }
         });
 
+        botaoCancelar.addEventListener('click', cancelarEdicao);
         carregarPacientes();
     </script>
 </body>
