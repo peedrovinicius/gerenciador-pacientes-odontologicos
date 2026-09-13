@@ -74,6 +74,29 @@ test('rejeita campos acima do limite de tamanho', () => {
     assert.equal(result.error, 'Nome ou procedimento excede o tamanho permitido.');
 });
 
+test('retorna o estado da aplicação no health check', async () => {
+    const response = await fetch(`${baseUrl}/api/health`);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(body, { status: 'ok' });
+});
+
+test('retorna a lista de pacientes pela API', async () => {
+    pacientes.push({
+        id: 'teste-1',
+        nome: 'Maria Silva',
+        procedimento: 'Limpeza',
+        criadoEm: '2026-09-13T00:00:00.000Z',
+    });
+
+    const response = await fetch(`${baseUrl}/api/pacientes`);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(body, pacientes);
+});
+
 test('cria um paciente pela API', async () => {
     const response = await fetch(`${baseUrl}/api/pacientes`, {
         method: 'POST',
@@ -185,4 +208,12 @@ test('retorna 404 ao tentar excluir paciente inexistente', async () => {
 
     assert.equal(response.status, 404);
     assert.equal(body.erro, 'Paciente não encontrado.');
+});
+
+test('retorna 404 para uma rota inexistente', async () => {
+    const response = await fetch(`${baseUrl}/api/rota-inexistente`);
+    const body = await response.json();
+
+    assert.equal(response.status, 404);
+    assert.equal(body.erro, 'Recurso não encontrado.');
 });
