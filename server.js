@@ -60,6 +60,17 @@ app.post('/api/pacientes', (req, res) => {
     return res.status(201).json(paciente);
 });
 
+app.delete('/api/pacientes/:id', (req, res) => {
+    const indice = pacientes.findIndex((paciente) => paciente.id === req.params.id);
+
+    if (indice === -1) {
+        return res.status(404).json({ erro: 'Paciente não encontrado.' });
+    }
+
+    pacientes.splice(indice, 1);
+    return res.status(204).send();
+});
+
 app.use((_req, res) => {
     res.status(404).json({ erro: 'Recurso não encontrado.' });
 });
@@ -70,4 +81,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { app, validatePaciente };
+module.exports = { app, validatePaciente, pacientes };
