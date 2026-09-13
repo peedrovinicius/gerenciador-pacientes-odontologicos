@@ -13,58 +13,19 @@
         }
 
         * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        main {
-            width: min(760px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 48px 0;
-        }
-
+        body { margin: 0; min-height: 100vh; }
+        main { width: min(760px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
         .cabecalho { margin-bottom: 24px; }
         h1 { margin-bottom: 8px; }
         .subtitulo { margin-top: 0; color: #5d6d7e; }
-
-        .cartao {
-            background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-        }
-
+        .cartao { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08); margin-bottom: 20px; }
         form { display: grid; gap: 16px; }
         label { font-weight: 700; }
-        input {
-            width: 100%;
-            margin-top: 6px;
-            padding: 12px;
-            border: 1px solid #cbd5df;
-            border-radius: 8px;
-            font: inherit;
-        }
-
-        input:focus {
-            outline: 2px solid #7da0c1;
-            outline-offset: 1px;
-        }
-
-        button {
-            padding: 12px 16px;
-            border: 0;
-            border-radius: 8px;
-            background: #243447;
-            color: #fff;
-            font: inherit;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
+        input { width: 100%; margin-top: 6px; padding: 12px; border: 1px solid #cbd5df; border-radius: 8px; font: inherit; }
+        input:focus { outline: 2px solid #7da0c1; outline-offset: 1px; }
+        button { padding: 10px 14px; border: 0; border-radius: 8px; background: #243447; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
         button:disabled { opacity: 0.7; cursor: wait; }
+        .botao-excluir { background: #8b2c2c; margin-top: 10px; }
         #mensagem { min-height: 24px; margin: 0; }
         .lista { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
         .paciente { border: 1px solid #e1e7ed; border-radius: 10px; padding: 16px; }
@@ -77,7 +38,7 @@
     <main>
         <header class="cabecalho">
             <h1>Gerenciador de Pacientes Odontológicos</h1>
-            <p class="subtitulo">Cadastro e consulta de procedimentos realizados.</p>
+            <p class="subtitulo">Cadastro, consulta e exclusão de procedimentos registrados.</p>
         </header>
 
         <section class="cartao" aria-labelledby="titulo-formulario">
@@ -118,7 +79,13 @@
             const procedimento = document.createElement('p');
             procedimento.textContent = `Procedimento: ${paciente.procedimento}`;
 
-            item.append(nome, procedimento);
+            const botaoExcluir = document.createElement('button');
+            botaoExcluir.type = 'button';
+            botaoExcluir.className = 'botao-excluir';
+            botaoExcluir.textContent = 'Excluir';
+            botaoExcluir.addEventListener('click', () => excluirPaciente(paciente.id, botaoExcluir));
+
+            item.append(nome, procedimento, botaoExcluir);
             return item;
         }
 
@@ -145,6 +112,30 @@
                 renderizarPacientes(pacientes);
             } catch (erro) {
                 mensagem.textContent = erro.message;
+            }
+        }
+
+        async function excluirPaciente(id, botao) {
+            if (!window.confirm('Excluir este registro?')) return;
+
+            botao.disabled = true;
+            mensagem.textContent = '';
+
+            try {
+                const resposta = await fetch(`/api/pacientes/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                });
+
+                if (!resposta.ok) {
+                    const resultado = await resposta.json();
+                    throw new Error(resultado.erro || 'Não foi possível excluir o registro.');
+                }
+
+                mensagem.textContent = 'Registro excluído com sucesso.';
+                await carregarPacientes();
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                botao.disabled = false;
             }
         }
 
