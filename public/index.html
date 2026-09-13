@@ -3,93 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema web para cadastro e consulta de registros odontológicos.">
     <title>Gerenciador de Pacientes Odontológicos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Caladea&family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            max-width: 600px; 
-            margin: 40px auto; 
-            padding: 20px; 
-            background-color: #f9f9f9;
+        :root {
+            font-family: Arial, sans-serif;
+            color: #243447;
+            background: #f4f6f8;
         }
-        h1 { 
-            font-family: 'EB Garamond', serif; 
-            color: #2c3e50; 
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 10px;
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
         }
-        div, ul, button, input { 
-            font-family: 'Caladea', serif; 
-            font-size: 18px; 
+
+        main {
+            width: min(760px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
         }
-        .formulario {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+
+        .cabecalho { margin-bottom: 24px; }
+        h1 { margin-bottom: 8px; }
+        .subtitulo { margin-top: 0; color: #5d6d7e; }
+
+        .cartao {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
         }
-        input { 
-            padding: 10px; 
-            border: 1px solid #ccc;
-            border-radius: 4px;
+
+        form { display: grid; gap: 16px; }
+        label { font-weight: 700; }
+        input {
+            width: 100%;
+            margin-top: 6px;
+            padding: 12px;
+            border: 1px solid #cbd5df;
+            border-radius: 8px;
+            font: inherit;
         }
-        button { 
-            padding: 10px; 
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer; 
+
+        input:focus {
+            outline: 2px solid #7da0c1;
+            outline-offset: 1px;
         }
-        button:hover { background-color: #1a252f; }
-        ul { list-style-type: none; padding: 0; }
-        li {
-            background: white;
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        button {
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: #243447;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
         }
+
+        button:disabled { opacity: 0.7; cursor: wait; }
+        #mensagem { min-height: 24px; margin: 0; }
+        .lista { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+        .paciente { border: 1px solid #e1e7ed; border-radius: 10px; padding: 16px; }
+        .paciente h3 { margin: 0 0 6px; }
+        .paciente p { margin: 4px 0; }
+        .vazio { color: #6b7785; }
     </style>
 </head>
 <body>
-    <h1>Registro de Procedimentos</h1>
-    
-    <div class="formulario">
-        <input type="text" id="nome" placeholder="Nome do Paciente">
-        <input type="text" id="procedimento" placeholder="Procedimento realizado">
-        <button onclick="salvarPaciente()">Salvar Ficha</button>
-    </div>
-    
-    <ul id="lista"></ul>
+    <main>
+        <header class="cabecalho">
+            <h1>Gerenciador de Pacientes Odontológicos</h1>
+            <p class="subtitulo">Cadastro e consulta de procedimentos realizados.</p>
+        </header>
+
+        <section class="cartao" aria-labelledby="titulo-formulario">
+            <h2 id="titulo-formulario">Novo registro</h2>
+            <form id="formulario-paciente">
+                <div>
+                    <label for="nome">Nome do paciente</label>
+                    <input id="nome" name="nome" type="text" maxlength="120" required>
+                </div>
+                <div>
+                    <label for="procedimento">Procedimento realizado</label>
+                    <input id="procedimento" name="procedimento" type="text" maxlength="200" required>
+                </div>
+                <button id="botao-salvar" type="submit">Salvar registro</button>
+                <p id="mensagem" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <section class="cartao" aria-labelledby="titulo-registros">
+            <h2 id="titulo-registros">Registros</h2>
+            <ul id="lista" class="lista"></ul>
+        </section>
+    </main>
 
     <script>
+        const formulario = document.getElementById('formulario-paciente');
+        const lista = document.getElementById('lista');
+        const mensagem = document.getElementById('mensagem');
+        const botaoSalvar = document.getElementById('botao-salvar');
+
+        function criarRegistro(paciente) {
+            const item = document.createElement('li');
+            item.className = 'paciente';
+
+            const nome = document.createElement('h3');
+            nome.textContent = paciente.nome;
+
+            const procedimento = document.createElement('p');
+            procedimento.textContent = `Procedimento: ${paciente.procedimento}`;
+
+            item.append(nome, procedimento);
+            return item;
+        }
+
+        function renderizarPacientes(pacientes) {
+            lista.replaceChildren();
+
+            if (pacientes.length === 0) {
+                const vazio = document.createElement('li');
+                vazio.className = 'vazio';
+                vazio.textContent = 'Nenhum registro cadastrado.';
+                lista.appendChild(vazio);
+                return;
+            }
+
+            pacientes.forEach((paciente) => lista.appendChild(criarRegistro(paciente)));
+        }
+
         async function carregarPacientes() {
-            const resposta = await fetch('/api/pacientes');
-            const pacientes = await resposta.json();
-            const lista = document.getElementById('lista');
-            lista.innerHTML = '';
-            pacientes.forEach(p => {
-                lista.innerHTML += `<li><strong>${p.nome}</strong><br>Procedimento: ${p.procedimento}</li>`;
-            });
+            try {
+                const resposta = await fetch('/api/pacientes');
+                if (!resposta.ok) throw new Error('Não foi possível carregar os registros.');
+
+                const pacientes = await resposta.json();
+                renderizarPacientes(pacientes);
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+            }
         }
 
-        async function salvarPaciente() {
-            const nome = document.getElementById('nome').value;
-            const procedimento = document.getElementById('procedimento').value;
+        formulario.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+            mensagem.textContent = '';
+            botaoSalvar.disabled = true;
 
-            if(!nome || !procedimento) return alert("Preencha todos os campos!");
+            const dados = Object.fromEntries(new FormData(formulario));
 
-            await fetch('/api/pacientes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, procedimento })
-            });
+            try {
+                const resposta = await fetch('/api/pacientes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados),
+                });
 
-            document.getElementById('nome').value = '';
-            document.getElementById('procedimento').value = '';
-            carregarPacientes();
-        }
+                const resultado = await resposta.json();
+                if (!resposta.ok) throw new Error(resultado.erro || 'Não foi possível salvar o registro.');
+
+                formulario.reset();
+                mensagem.textContent = 'Registro salvo com sucesso.';
+                await carregarPacientes();
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+            } finally {
+                botaoSalvar.disabled = false;
+            }
+        });
 
         carregarPacientes();
     </script>

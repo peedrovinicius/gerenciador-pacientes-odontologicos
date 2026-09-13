@@ -1,29 +1,73 @@
-// 1. Aqui estamos "chamando" as ferramentas que instalamos
 const express = require('express');
+const crypto = require('node:crypto');
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// 2. Configurações básicas para o servidor entender os dados e onde ficará a parte visual
-app.use(express.json());
-app.use(express.static('public')); 
+app.use(express.json({ limit: '10kb' }));
+app.use(express.static('public'));
 
-// 3. Nossa "gaveta" temporária para guardar as fichas. 
-// Em um projeto avançado, isso seria um Banco de Dados de verdade.
-let pacientes = []; 
+const pacientes = [];
 
-// 4. Rota GET: É como se a tela perguntasse "Quais os pacientes cadastrados?"
-app.get('/api/pacientes', (req, res) => {
-    res.json(pacientes); // O servidor responde entregando a lista
+function validatePaciente(body) {
+    const nome = typeof body?.nome === 'string' ? body.nome.trim() : '';
+    const procedimento = typeof body?.procedimento === 'string'
+        ? body.procedimento.trim()
+        : '';
+
+    if (!nome || !procedimento) {
+        return {
+            valid: false,
+            error: 'Nome e procedimento são obrigatórios.',
+        };
+    }
+
+    if (nome.length > 120 || procedimento.length > 200) {
+        return {
+            valid: false,
+            error: 'Nome ou procedimento excede o tamanho permitido.',
+        };
+    }
+
+    return {
+        valid: true,
+        data: { nome, procedimento },
+    };
+}
+
+app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok' });
 });
 
-// 5. Rota POST: É como se a tela dissesse "Tome aqui os dados de um paciente novo!"
+app.get('/api/pacientes', (_req, res) => {
+    res.json(pacientes);
+});
+
 app.post('/api/pacientes', (req, res) => {
-    const novoPaciente = req.body;
-    pacientes.push(novoPaciente); // O servidor guarda o paciente na nossa lista
-    res.json({ mensagem: "Paciente salvo com sucesso!" });
+    const validation = validatePaciente(req.body);
+
+    if (!validation.valid) {
+        return res.status(400).json({ erro: validation.error });
+    }
+
+    const paciente = {
+        id: crypto.randomUUID(),
+        ...validation.data,
+        criadoEm: new Date().toISOString(),
+    };
+
+    pacientes.push(paciente);
+    return res.status(201).json(paciente);
 });
 
-// 6. Ligar o servidor e deixá-lo aguardando na porta 3000
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
+app.use((_req, res) => {
+    res.status(404).json({ erro: 'Recurso não encontrado.' });
 });
+
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Servidor rodando em http://localhost:${port}`);
+    });
+}
+
+module.exports = { app, validatePaciente };
