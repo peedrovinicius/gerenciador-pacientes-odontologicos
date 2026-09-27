@@ -54,7 +54,7 @@ API Node.js + Express
 Memória da aplicação
 ```
 
-A persistência é **intencionalmente em memória**. Os registros são perdidos quando o processo é reiniciado. Essa limitação mantém o projeto pequeno e adequado ao objetivo de estudo.
+A persistência é **intencionalmente em memória**. Os registros são perdidos quando o processo é reiniciado. Essa decisão mantém o escopo concentrado na integração HTTP entre frontend e backend.
 
 ## API
 
@@ -95,7 +95,9 @@ Remove um registro existente. Retorna `204 No Content` em caso de sucesso e `404
 
 ## Segurança e validação
 
-O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON também possui limite de `10kb`.
+O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON possui limite de `10kb`, e JSON malformado ou payload acima do limite recebe resposta controlada da API.
+
+A aplicação também remove o cabeçalho `X-Powered-By`, impede cache das rotas `/api` e envia cabeçalhos básicos de proteção contra MIME sniffing, embedding em frames e envio desnecessário de referência.
 
 No frontend, os dados retornados pela API são inseridos no DOM com `textContent` e elementos criados via JavaScript, evitando a interpolação direta de conteúdo recebido em `innerHTML`.
 
@@ -105,7 +107,7 @@ No frontend, os dados retornados pela API são inseridos no DOM com `textContent
 - **CSS3** — layout e responsividade;
 - **JavaScript** — interação e consumo da API;
 - **Node.js 18+** — ambiente de execução;
-- **Express 4.x** — servidor HTTP e API;
+- **Express 4.22.3** — servidor HTTP e API;
 - **Node Test Runner** — testes automatizados;
 - **GitHub Actions** — integração contínua.
 
@@ -117,13 +119,15 @@ Os testes podem ser executados localmente com:
 npm test
 ```
 
-A suíte cobre validação dos dados e os principais fluxos da API, incluindo cadastro, atualização e exclusão, além dos cenários de erro correspondentes.
+A suíte cobre validação dos dados e os principais fluxos da API, incluindo cadastro, atualização e exclusão, além de JSON malformado, excesso de payload, cabeçalhos de segurança e cenários de erro correspondentes.
 
 A CI executa automaticamente:
 
 ```bash
 npm install
+node --check server.js
 npm test
+npm audit --omit=dev --audit-level=high
 ```
 
 O workflow é acionado em `push` e `pull_request` na branch `main`.
@@ -174,8 +178,10 @@ npm start
 - não há autenticação ou autorização;
 - o projeto não possui banco de dados;
 - não deve ser utilizado como sistema clínico de produção;
-- o escopo é um projeto educacional para demonstrar integração frontend/backend.
+- o escopo desta versão é demonstrar, de forma isolada, integração frontend/backend e operações CRUD sobre uma API REST.
 
-## Próximas evoluções
+## Status
 
-Uma evolução natural seria adicionar persistência em banco de dados e busca de registros, mantendo a API como camada de acesso aos dados.
+**Versão demonstrativa concluída.**
+
+Persistência em banco, autenticação e recursos clínicos reais estão deliberadamente fora do escopo desta aplicação e não são requisitos pendentes desta versão.

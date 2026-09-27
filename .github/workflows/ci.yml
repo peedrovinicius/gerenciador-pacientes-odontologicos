@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,5 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Syntax check
+        run: node --check server.js
+
       - name: Run tests
         run: npm test
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

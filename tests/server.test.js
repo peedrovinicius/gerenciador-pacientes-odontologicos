@@ -210,6 +210,44 @@ test('retorna 404 ao tentar excluir paciente inexistente', async () => {
     assert.equal(body.erro, 'Paciente não encontrado.');
 });
 
+test('retorna cabeçalhos básicos de segurança e impede cache da API', async () => {
+    const response = await fetch(`${baseUrl}/api/health`);
+
+    assert.equal(response.headers.get('x-powered-by'), null);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.equal(response.headers.get('pragma'), 'no-cache');
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    assert.equal(response.headers.get('x-frame-options'), 'DENY');
+    assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+});
+
+test('retorna JSON controlado para corpo JSON malformado', async () => {
+    const response = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{"nome":',
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(body, { erro: 'JSON inválido.' });
+});
+
+test('rejeita payload acima de 10kb com resposta JSON controlada', async () => {
+    const response = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nome: 'A'.repeat(11_000),
+            procedimento: 'Limpeza',
+        }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 413);
+    assert.deepEqual(body, { erro: 'Payload excede o limite de 10kb.' });
+});
+
 test('retorna 404 para uma rota inexistente', async () => {
     const response = await fetch(`${baseUrl}/api/rota-inexistente`);
     const body = await response.json();

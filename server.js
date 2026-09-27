@@ -4,6 +4,22 @@ const crypto = require('node:crypto');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.disable('x-powered-by');
+
+app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    next();
+});
+
+app.use('/api', (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Pragma', 'no-cache');
+    next();
+});
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static('public'));
 
@@ -90,6 +106,18 @@ app.delete('/api/pacientes/:id', (req, res) => {
 
     pacientes.splice(indice, 1);
     return res.status(204).send();
+});
+
+app.use((error, _req, res, next) => {
+    if (error?.type === 'entity.parse.failed') {
+        return res.status(400).json({ erro: 'JSON inválido.' });
+    }
+
+    if (error?.type === 'entity.too.large') {
+        return res.status(413).json({ erro: 'Payload excede o limite de 10kb.' });
+    }
+
+    return next(error);
 });
 
 app.use((_req, res) => {
