@@ -1,7 +1,7 @@
 # Gerenciador de Pacientes Odontológicos
 
 [![CI](https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos/actions/workflows/ci.yml/badge.svg)](https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos/actions/workflows/ci.yml)
-![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
 Aplicação web para cadastro, consulta, edição e exclusão de registros odontológicos, desenvolvida com **HTML, CSS, JavaScript, Node.js e Express**.
@@ -106,7 +106,7 @@ No frontend, os dados retornados pela API são inseridos no DOM com `textContent
 - **HTML5** — estrutura da interface;
 - **CSS3** — layout e responsividade;
 - **JavaScript** — interação e consumo da API;
-- **Node.js 18+** — ambiente de execução;
+- **Node.js 24 LTS** — ambiente de execução;
 - **Express 4.22.3** — servidor HTTP e API;
 - **Node Test Runner** — testes automatizados;
 - **GitHub Actions** — integração contínua.
@@ -134,7 +134,7 @@ O workflow é acionado em `push` e `pull_request` na branch `main`.
 
 ## Como executar localmente
 
-1. Instale o Node.js 18 ou superior.
+1. Instale o Node.js 24 LTS.
 2. Clone o repositório:
 
 ```bash
