@@ -22,6 +22,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Emit lockfile for reproducibility audit
+        run: |
+          echo "__PACKAGE_LOCK_START__"
+          cat package-lock.json
+          echo "__PACKAGE_LOCK_END__"
+
       - name: Syntax check
         run: node --check server.js
 
