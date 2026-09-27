@@ -20,6 +20,13 @@ app.use('/api', (_req, res, next) => {
     next();
 });
 
+app.use('/api/pacientes', (req, res, next) => {
+    if (['POST', 'PUT'].includes(req.method) && !req.is('application/json')) {
+        return res.status(415).json({ erro: 'Content-Type deve ser application/json.' });
+    }
+    return next();
+});
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static('public'));
 

@@ -255,3 +255,37 @@ test('retorna 404 para uma rota inexistente', async () => {
     assert.equal(response.status, 404);
     assert.equal(body.erro, 'Recurso não encontrado.');
 });
+
+
+test('rejeita criação sem Content-Type application/json', async () => {
+    const response = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ nome: 'Maria Silva', procedimento: 'Limpeza' }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 415);
+    assert.deepEqual(body, { erro: 'Content-Type deve ser application/json.' });
+    assert.equal(pacientes.length, 0);
+});
+
+test('rejeita atualização sem Content-Type application/json', async () => {
+    pacientes.push({
+        id: 'teste-1',
+        nome: 'Maria Silva',
+        procedimento: 'Limpeza',
+        criadoEm: '2026-09-13T00:00:00.000Z',
+    });
+
+    const response = await fetch(`${baseUrl}/api/pacientes/teste-1`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ nome: 'Maria Santos', procedimento: 'Restauração' }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 415);
+    assert.deepEqual(body, { erro: 'Content-Type deve ser application/json.' });
+    assert.equal(pacientes[0].nome, 'Maria Silva');
+});
