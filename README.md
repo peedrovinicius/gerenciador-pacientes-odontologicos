@@ -10,6 +10,8 @@ Aplicação web para cadastro, consulta, edição e exclusão de registros odont
 
 **[Demo online](https://gerenciador-pacientes-odontologicos.onrender.com)**
 
+> Demonstração técnica pública. Utilize apenas dados fictícios. O projeto não possui autenticação, autorização ou persistência em banco de dados e não deve receber informações reais de pacientes.
+
 ## Sobre o projeto
 
 O projeto simula um fluxo simples de atendimento: a interface envia dados para uma API, o servidor valida as entradas e mantém os registros em memória, enquanto a interface consulta, edita e exclui os registros cadastrados.
