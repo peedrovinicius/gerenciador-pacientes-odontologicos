@@ -95,7 +95,7 @@ Remove um registro existente. Retorna `204 No Content` em caso de sucesso e `404
 
 ## Segurança e validação
 
-O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON possui limite de `10kb`, e JSON malformado ou payload acima do limite recebe resposta controlada da API.
+O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, exige `Content-Type: application/json`, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON possui limite de `10kb`, e tipo de conteúdo incorreto, JSON malformado ou payload acima do limite recebe resposta controlada da API.
 
 A aplicação também remove o cabeçalho `X-Powered-By`, impede cache das rotas `/api` e envia cabeçalhos básicos de proteção contra MIME sniffing, embedding em frames e envio desnecessário de referência.
 
