@@ -132,6 +132,18 @@ npm audit --omit=dev --audit-level=high
 
 O workflow é acionado em `push` e `pull_request` na branch `main`.
 
+## Deploy
+
+O repositório inclui `render.yaml` com a configuração reproduzível do serviço:
+
+- runtime Node.js;
+- instalação determinística com `npm ci`;
+- inicialização com `npm start`;
+- health check em `/api/health`;
+- deploy automático a partir da branch `main`.
+
+O serviço público permanece uma demonstração técnica e não deve receber dados reais de pacientes.
+
 ## Como executar localmente
 
 1. Instale o Node.js 24 LTS.
@@ -169,6 +181,7 @@ npm start
 │   └── server.test.js
 ├── package.json
 ├── package-lock.json
+├── render.yaml
 ├── server.js
 └── README.md
 ```
