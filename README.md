@@ -124,7 +124,7 @@ A suíte cobre validação dos dados e os principais fluxos da API, incluindo ca
 A CI executa automaticamente:
 
 ```bash
-npm install
+npm ci
 node --check server.js
 npm test
 npm audit --omit=dev --audit-level=high
@@ -142,10 +142,10 @@ git clone https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos.
 cd gerenciador-pacientes-odontologicos
 ```
 
-3. Instale as dependências:
+3. Instale exatamente as dependências registradas no lockfile:
 
 ```bash
-npm install
+npm ci
 ```
 
 4. Inicie a aplicação:
@@ -168,6 +168,7 @@ npm start
 ├── tests/
 │   └── server.test.js
 ├── package.json
+├── package-lock.json
 ├── server.js
 └── README.md
 ```
