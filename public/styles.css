@@ -1,0 +1,30 @@
+:root {
+    font-family: Arial, sans-serif;
+    color: #243447;
+    background: #f4f6f8;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+main { width: min(760px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
+.cabecalho { margin-bottom: 24px; }
+h1 { margin-bottom: 8px; }
+.subtitulo { margin-top: 0; color: #5d6d7e; }
+.aviso { margin: 12px 0 0; color: #5d6d7e; font-size: 0.95rem; }
+.cartao { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08); margin-bottom: 20px; }
+form { display: grid; gap: 16px; }
+label { font-weight: 700; }
+input { width: 100%; margin-top: 6px; padding: 12px; border: 1px solid #cbd5df; border-radius: 8px; font: inherit; }
+input:focus { outline: 2px solid #7da0c1; outline-offset: 1px; }
+.acoes-formulario { display: flex; gap: 10px; flex-wrap: wrap; }
+button { padding: 10px 14px; border: 0; border-radius: 8px; background: #243447; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+button:disabled { opacity: 0.7; cursor: wait; }
+.botao-cancelar { background: #6b7785; }
+.botao-excluir { background: #8b2c2c; margin-top: 10px; }
+.botao-editar { margin-top: 10px; margin-right: 8px; }
+#mensagem { min-height: 24px; margin: 0; }
+.lista { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.paciente { border: 1px solid #e1e7ed; border-radius: 10px; padding: 16px; }
+.paciente h3 { margin: 0 0 6px; }
+.paciente p { margin: 4px 0; }
+.vazio { color: #6b7785; }
