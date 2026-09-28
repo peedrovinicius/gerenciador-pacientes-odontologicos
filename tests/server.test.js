@@ -219,6 +219,7 @@ test('retorna cabeçalhos básicos de segurança e impede cache da API', async (
     assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
     assert.equal(response.headers.get('x-frame-options'), 'DENY');
     assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(response.headers.get('permissions-policy'), 'camera=(), microphone=(), geolocation=()');
 });
 
 test('retorna JSON controlado para corpo JSON malformado', async () => {
