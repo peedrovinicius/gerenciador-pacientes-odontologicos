@@ -16,7 +16,7 @@ Aplicação web para cadastro, consulta, edição e exclusão de registros odont
 
 ## Sobre o projeto
 
-O projeto simula um fluxo simples de atendimento: a interface envia dados para uma API, o servidor valida as entradas e mantém os registros em memória, enquanto a interface consulta, edita e exclui os registros cadastrados.
+O projeto simula um fluxo simples de atendimento: a interface envia dados para uma API, a aplicação Express valida as entradas e o armazenamento isolado mantém os registros em memória, enquanto a interface consulta, edita e exclui os registros cadastrados.
 
 O objetivo é demonstrar, de forma prática, a integração entre **frontend e backend**, operações HTTP, validação de dados, manipulação segura do DOM, testes automatizados e integração contínua.
 
@@ -46,13 +46,17 @@ Frontend (HTML/CSS/JavaScript)
    ▼
 API Node.js + Express
    │
-   ├── GET    /api/health
-   ├── GET    /api/pacientes
-   ├── POST   /api/pacientes
-   ├── PUT    /api/pacientes/:id
-   └── DELETE /api/pacientes/:id
-   │
-   ▼
+   ├── aplicação e rotas
+   ├── validação
+   └── armazenamento
+       │
+       ├── GET    /api/health
+       ├── GET    /api/pacientes
+       ├── POST   /api/pacientes
+       ├── PUT    /api/pacientes/:id
+       └── DELETE /api/pacientes/:id
+       │
+       ▼
 Memória da aplicação
 ```
 
@@ -179,6 +183,10 @@ npm start
 │       └── ci.yml
 ├── public/
 │   └── index.html
+├── src/
+│   ├── app.js
+│   ├── store.js
+│   └── validation.js
 ├── tests/
 │   └── server.test.js
 ├── package.json
