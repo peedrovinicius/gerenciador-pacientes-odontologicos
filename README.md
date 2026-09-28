@@ -4,6 +4,8 @@
 ![Node.js](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
+[Demo](https://gerenciador-pacientes-odontologicos.onrender.com) · [Issues](https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos/issues) · [Como contribuir](CONTRIBUTING.md)
+
 Aplicação web para cadastro, consulta, edição e exclusão de registros odontológicos, desenvolvida com **HTML, CSS, JavaScript, Node.js e Express**.
 
 ## Acesse o projeto
