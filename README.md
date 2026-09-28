@@ -182,7 +182,9 @@ npm start
 │   └── workflows/
 │       └── ci.yml
 ├── public/
-│   └── index.html
+│   ├── app.js
+│   ├── index.html
+│   └── styles.css
 ├── src/
 │   ├── app.js
 │   ├── store.js
