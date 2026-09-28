@@ -1,0 +1,33 @@
+name: Relatar problema
+description: Reporte um erro de API, interface, validação, teste ou documentação.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: Use apenas dados fictícios. Não publique informações reais de pacientes.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Descreva o comportamento observado.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      description: O que deveria ter acontecido?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      description: Informe os passos mínimos usando apenas dados fictícios.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacidade
+      options:
+        - label: Confirmo que não incluí dados reais de pacientes.
+          required: true

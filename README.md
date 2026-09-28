@@ -186,6 +186,12 @@ npm start
 └── README.md
 ```
 
+## Contribuindo
+
+Contribuições externas são bem-vindas. Antes de abrir um Pull Request, consulte o [guia de contribuição](CONTRIBUTING.md) e use as issues para alinhar o escopo da mudança.
+
+Use somente dados fictícios em exemplos, testes, issues e Pull Requests.
+
 ## Limitações
 
 - os dados são armazenados apenas em memória;
