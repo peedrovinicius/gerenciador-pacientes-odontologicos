@@ -1,0 +1,38 @@
+name: Propor melhoria
+description: Sugira uma melhoria técnica, de interface, testes ou documentação.
+title: "[Melhoria] "
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivação
+      description: Qual problema ou oportunidade esta proposta atende?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Escopo sugerido
+      description: Descreva uma solução objetiva e delimitada.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área principal
+      options:
+        - API e backend
+        - Frontend
+        - Testes e qualidade
+        - Segurança
+        - Documentação
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope_guard
+    attributes:
+      label: Escopo
+      options:
+        - label: A proposta mantém o projeto como demonstração técnica e não exige dados reais de pacientes.
+          required: true
+        - label: Tenho interesse em implementar esta melhoria.
