@@ -58,7 +58,7 @@ As capturas são atualizadas por um workflow do GitHub Actions quando a interfac
 - dentição adulta representada pelo sistema FDI;
 - 32 elementos dentários;
 - desenho visual diferenciado para molares, pré-molares, caninos e incisivos;
-- quatro incisivos inferiores centrais representados com anatomia mais estreita;
+- incisivos inferiores 31, 32, 41 e 42 representados com anatomia mais estreita;
 - seleção de um dente por clique;
 - painel lateral com número FDI, nome anatômico, condição e status;
 - três estados demonstrativos:
