@@ -183,23 +183,60 @@
                     </div>
                 </div>
 
-                <div class="dental-field">
-                    <div class="arch-block">
-                        <div class="arch-label">Superior</div>
-                        <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                <div class="odontogram-layout">
+                    <div class="dental-field">
+                        <div class="arch-block">
+                            <div class="arch-label">Arcada superior · Maxila</div>
+                            <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                        </div>
+
+                        <div class="midline"><span>FDI</span></div>
+
+                        <div class="arch-block">
+                            <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
+                            <div class="arch-label">Arcada inferior · Mandíbula</div>
+                        </div>
                     </div>
 
-                    <div class="midline"><span>FDI</span></div>
+                    <aside class="tooth-detail-panel" aria-live="polite">
+                        <div class="tooth-detail-heading">
+                            <div>
+                                <p class="kicker">DENTE SELECIONADO</p>
+                                <div class="tooth-number-large" id="odonto-detalhe-numero">16</div>
+                            </div>
+                            <span id="odonto-detalhe-status" class="detail-status planned">Planejado</span>
+                        </div>
 
-                    <div class="arch-block">
-                        <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
-                        <div class="arch-label">Inferior</div>
-                    </div>
+                        <div class="detail-tooth-stage">
+                            <span id="odonto-detalhe-forma" class="detail-tooth-shape molar" aria-hidden="true"></span>
+                        </div>
+
+                        <div class="tooth-detail-copy">
+                            <strong id="odonto-detalhe-nome">Primeiro molar superior direito</strong>
+                            <span id="odonto-detalhe-condicao">Cárie</span>
+                            <p id="odonto-detalhe-descricao">Exemplo fictício de lesão cariosa em dente posterior.</p>
+                        </div>
+
+                        <button id="alternar-status-dente" class="quiet-button tooth-status-button" type="button">Alternar estado</button>
+
+                        <div class="quick-example-box">
+                            <div class="quick-example-heading">
+                                <strong>Exemplos rápidos</strong>
+                                <small>aplicados ao dente selecionado</small>
+                            </div>
+                            <div class="quick-example-grid">
+                                <button type="button" data-odontograma-condicao="carie"><i class="condition-mark carie"></i>Cárie</button>
+                                <button type="button" data-odontograma-condicao="restauracao"><i class="condition-mark restauracao"></i>Restauração</button>
+                                <button type="button" data-odontograma-condicao="canal"><i class="condition-mark canal"></i>Canal</button>
+                                <button type="button" data-odontograma-condicao="profilaxia"><i class="condition-mark profilaxia"></i>Profilaxia</button>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
 
                 <div class="canvas-note">
                     <span>i</span>
-                    <p><strong>Demonstração visual.</strong> Não substitui prontuário clínico nem documentação profissional.</p>
+                    <p><strong>Demonstração visual.</strong> Os exemplos são fictícios e não substituem prontuário clínico nem documentação profissional.</p>
                 </div>
             </section>
         </section>
