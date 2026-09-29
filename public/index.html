@@ -3,106 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Demonstração de um sistema web para organização de pacientes e registros odontológicos fictícios.">
-    <title>Clínica Dental | Gestão odontológica</title>
+    <meta name="description" content="Demonstração de um sistema web simples para organização de registros odontológicos fictícios.">
+    <title>Clínica Dental | Registro odontológico</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
     <div class="app-shell">
         <aside class="sidebar" aria-label="Navegação principal">
             <div class="brand">
-                <div class="brand-mark" aria-hidden="true">D</div>
-                <div>
+                <div class="brand-mark" aria-hidden="true">
+                    <span class="brand-tooth"></span>
+                </div>
+                <div class="brand-copy">
                     <strong>Clínica Dental</strong>
-                    <span>Gestão odontológica</span>
+                    <span>registro clínico</span>
                 </div>
             </div>
 
             <nav class="nav">
                 <button class="nav-item active" data-view="dashboard" type="button">
-                    <span aria-hidden="true">⌂</span> Dashboard
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    <span>Visão geral</span>
                 </button>
                 <button class="nav-item" data-view="pacientes" type="button">
-                    <span aria-hidden="true">◎</span> Pacientes
+                    <span class="nav-icon" aria-hidden="true">◎</span>
+                    <span>Pacientes</span>
                 </button>
                 <button class="nav-item" data-view="odontograma" type="button">
-                    <span aria-hidden="true">◫</span> Odontograma
+                    <span class="nav-icon" aria-hidden="true">◫</span>
+                    <span>Odontograma</span>
                 </button>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="demo-badge">Ambiente demonstrativo</div>
-                <p>Use somente dados fictícios.</p>
+            <div class="sidebar-card">
+                <span class="sidebar-card-dot"></span>
+                <div>
+                    <strong>Demonstração pública</strong>
+                    <p>Somente dados fictícios.</p>
+                </div>
             </div>
         </aside>
 
         <main class="main">
             <header class="topbar">
                 <div>
-                    <p class="eyebrow">Visão geral</p>
-                    <h1 id="titulo-pagina">Dashboard</h1>
+                    <p class="eyebrow">Registro odontológico</p>
+                    <h1 id="titulo-pagina">Visão geral</h1>
                 </div>
+
                 <div class="topbar-actions">
-                    <span class="status-dot"><i></i> Sistema online</span>
-                    <button id="alternar-tema" class="secondary-button theme-button" type="button">Tema</button>
-                    <button id="novo-paciente-topo" class="primary-button" type="button">+ Novo registro</button>
+                    <span class="status-dot"><i></i> Online</span>
+                    <button id="alternar-tema" class="icon-control theme-button" type="button" aria-label="Alternar tema">◐</button>
+                    <button id="novo-paciente-topo" class="primary-button" type="button">Novo registro</button>
                 </div>
             </header>
 
             <section id="view-dashboard" class="view active" aria-labelledby="titulo-pagina">
-                <div class="welcome">
-                    <div>
-                        <p class="eyebrow">Painel clínico</p>
-                        <h2>Gestão odontológica simples, clara e visual</h2>
-                        <p>Uma demonstração enxuta para organizar registros fictícios, acompanhar atividade e visualizar condições odontológicas sem excesso de telas.</p>
-                        <div class="welcome-actions">
-                            <button class="welcome-primary" data-view-target="pacientes" type="button">Abrir pacientes</button>
-                            <button class="welcome-secondary" data-view-target="odontograma" type="button">Ver odontograma</button>
+                <section class="hero">
+                    <div class="hero-copy">
+                        <div class="hero-kicker">
+                            <span></span>
+                            Interface clínica essencial
+                        </div>
+                        <h2>Menos telas.<br><em>Mais clareza.</em></h2>
+                        <p>Uma demonstração simples para registrar pacientes fictícios, visualizar atividade e explorar um odontograma interativo.</p>
+
+                        <div class="hero-actions">
+                            <button class="hero-primary" data-view-target="pacientes" type="button">Abrir pacientes</button>
+                            <button class="hero-link" data-view-target="odontograma" type="button">Explorar odontograma <span>→</span></button>
                         </div>
                     </div>
-                    <div class="welcome-chip">Demonstração técnica</div>
-                </div>
 
-                <div class="stats-grid" aria-label="Indicadores">
-                    <article class="stat-card">
-                        <span class="stat-label">Pacientes cadastrados</span>
+                    <div class="clinical-orbit" aria-hidden="true">
+                        <div class="orbit orbit-a"></div>
+                        <div class="orbit orbit-b"></div>
+                        <div class="orbit-core">
+                            <span class="hero-tooth"></span>
+                            <small>visão clínica</small>
+                        </div>
+                        <div class="orbit-chip chip-one">
+                            <span>Pacientes</span>
+                            <strong id="hero-pacientes">0</strong>
+                        </div>
+                        <div class="orbit-chip chip-two">
+                            <span>Dentes</span>
+                            <strong>32</strong>
+                        </div>
+                        <div class="orbit-chip chip-three">
+                            <span>Status</span>
+                            <strong>Ativo</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="signal-strip" aria-label="Indicadores">
+                    <article>
+                        <span>Pacientes</span>
                         <strong id="stat-pacientes">0</strong>
-                        <small>registros no sistema</small>
+                        <small>registros ativos</small>
                     </article>
-                    <article class="stat-card">
-                        <span class="stat-label">Registros recentes</span>
+                    <article>
+                        <span>Recentes</span>
                         <strong id="stat-recentes">0</strong>
-                        <small>atividade cadastrada</small>
+                        <small>últimas atividades</small>
                     </article>
-                    <article class="stat-card">
-                        <span class="stat-label">Procedimentos</span>
+                    <article>
+                        <span>Procedimentos</span>
                         <strong id="stat-procedimentos">0</strong>
                         <small>tipos registrados</small>
                     </article>
-                    <article class="stat-card">
-                        <span class="stat-label">Status</span>
-                        <strong class="status-value">Ativo</strong>
-                        <small>API e interface disponíveis</small>
+                    <article class="signal-status">
+                        <span>Sistema</span>
+                        <strong class="status-value">Online</strong>
+                        <small>demonstração disponível</small>
                     </article>
-                </div>
+                </section>
 
                 <div class="dashboard-grid">
-                    <section class="panel">
+                    <section class="panel activity-panel">
                         <div class="panel-header">
                             <div>
-                                <p class="eyebrow">Atividade</p>
-                                <h2>Registros recentes</h2>
+                                <p class="eyebrow">Movimento recente</p>
+                                <h2>Atividade clínica</h2>
                             </div>
-                            <button class="text-button" data-view-target="pacientes" type="button">Ver todos</button>
+                            <button class="text-button" data-view-target="pacientes" type="button">Ver pacientes</button>
                         </div>
                         <div id="recentes" class="recent-list"></div>
                     </section>
 
-                    <section class="panel">
+                    <section class="panel procedure-panel">
                         <div class="panel-header">
                             <div>
-                                <p class="eyebrow">Distribuição</p>
-                                <h2>Procedimentos cadastrados</h2>
+                                <p class="eyebrow">Mapa rápido</p>
+                                <h2>Procedimentos</h2>
                             </div>
                         </div>
                         <div id="procedimentos-resumo" class="procedure-summary"></div>
@@ -113,11 +149,11 @@
             <section id="view-pacientes" class="view">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Cadastro clínico</p>
-                        <h2>Pacientes e registros</h2>
-                        <p>Consulte, edite e organize os registros demonstrativos já cadastrados.</p>
+                        <p class="eyebrow">Registros fictícios</p>
+                        <h2>Pacientes</h2>
+                        <p>Uma lista simples para demonstrar cadastro, consulta, edição e exclusão.</p>
                     </div>
-                    <button id="novo-paciente" class="primary-button" type="button">+ Novo registro</button>
+                    <button id="novo-paciente" class="primary-button" type="button">Novo registro</button>
                 </div>
 
                 <div class="patients-layout">
@@ -125,7 +161,8 @@
                         <div class="search-row">
                             <label class="search-box">
                                 <span class="sr-only">Buscar paciente</span>
-                                <input id="busca" type="search" placeholder="Buscar por paciente ou procedimento">
+                                <span class="search-icon" aria-hidden="true">⌕</span>
+                                <input id="busca" type="search" placeholder="Buscar paciente ou procedimento">
                             </label>
                             <span id="contador-registros" class="count-pill">0 registros</span>
                         </div>
@@ -133,28 +170,38 @@
                     </section>
 
                     <section id="editor" class="panel editor-panel">
+                        <div class="editor-accent" aria-hidden="true"></div>
                         <div class="panel-header">
                             <div>
-                                <p class="eyebrow">Registro</p>
+                                <p class="eyebrow">Entrada rápida</p>
                                 <h2 id="titulo-formulario">Novo registro</h2>
                             </div>
                         </div>
+
                         <form id="formulario-paciente">
                             <div class="field">
                                 <label for="nome">Nome do paciente</label>
-                                <input id="nome" name="nome" type="text" maxlength="120" autocomplete="off" placeholder="Ex.: Paciente Demonstração" required>
+                                <input id="nome" name="nome" type="text" maxlength="120" autocomplete="off" placeholder="Paciente Demonstração" required>
                             </div>
+
                             <div class="field">
                                 <label for="procedimento">Procedimento</label>
                                 <input id="procedimento" name="procedimento" type="text" maxlength="200" autocomplete="off" placeholder="Ex.: Profilaxia" required>
                             </div>
+
                             <div class="privacy-note">
-                                <strong>Privacidade:</strong> este projeto é uma demonstração pública. Não informe dados reais de pacientes.
+                                <span class="privacy-icon">i</span>
+                                <div>
+                                    <strong>Ambiente público</strong>
+                                    <p>Não informe dados reais de pacientes.</p>
+                                </div>
                             </div>
+
                             <div class="form-actions">
                                 <button id="botao-salvar" class="primary-button" type="submit">Salvar registro</button>
-                                <button id="botao-cancelar" class="secondary-button" type="button" hidden>Cancelar edição</button>
+                                <button id="botao-cancelar" class="secondary-button" type="button" hidden>Cancelar</button>
                             </div>
+
                             <p id="mensagem" class="message" role="status" aria-live="polite"></p>
                         </form>
                     </section>
@@ -164,42 +211,47 @@
             <section id="view-odontograma" class="view">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Avaliação visual</p>
-                        <h2>Odontograma demonstrativo</h2>
-                        <p>Clique em um dente para alternar entre hígido, planejado e realizado.</p>
+                        <p class="eyebrow">Interação visual</p>
+                        <h2>Odontograma</h2>
+                        <p>Clique nos dentes para alternar entre hígido, planejado e realizado.</p>
                     </div>
-                    <button id="resetar-odontograma" class="secondary-button" type="button">Resetar avaliação</button>
+                    <button id="resetar-odontograma" class="secondary-button" type="button">Resetar</button>
                 </div>
 
                 <section class="panel odontogram-panel">
-                    <div class="odontogram-toolbar">
+                    <div class="odontogram-top">
                         <div class="legend">
                             <span><i class="legend-dot healthy"></i> Hígido</span>
                             <span><i class="legend-dot planned"></i> Planejado</span>
                             <span><i class="legend-dot done"></i> Realizado</span>
                         </div>
+
                         <div class="odontogram-summary" aria-live="polite">
-                            <span><strong id="odonto-higidos">32</strong> hígidos</span>
-                            <span><strong id="odonto-planejados">0</strong> planejados</span>
-                            <span><strong id="odonto-realizados">0</strong> realizados</span>
+                            <span><strong id="odonto-higidos">32</strong><small>hígidos</small></span>
+                            <span><strong id="odonto-planejados">0</strong><small>planejados</small></span>
+                            <span><strong id="odonto-realizados">0</strong><small>realizados</small></span>
                         </div>
                     </div>
 
-                    <div class="arch-block">
-                        <div class="arch-label">Arcada superior</div>
-                        <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
-                    </div>
+                    <div class="odontogram-stage">
+                        <div class="stage-glow" aria-hidden="true"></div>
 
-                    <div class="midline"><span>Linha média</span></div>
+                        <div class="arch-block">
+                            <div class="arch-label">Arcada superior</div>
+                            <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                        </div>
 
-                    <div class="arch-block">
-                        <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
-                        <div class="arch-label">Arcada inferior</div>
+                        <div class="midline"><span>FDI</span></div>
+
+                        <div class="arch-block">
+                            <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
+                            <div class="arch-label">Arcada inferior</div>
+                        </div>
                     </div>
 
                     <div class="odontogram-note">
-                        <strong>Demonstração visual.</strong>
-                        Este odontograma não substitui prontuário clínico nem registro profissional.
+                        <span class="note-mark">i</span>
+                        <p><strong>Demonstração visual.</strong> Não substitui prontuário clínico nem documentação profissional.</p>
                     </div>
                 </section>
             </section>
@@ -209,24 +261,30 @@
     <dialog id="detalhes-paciente" class="details-dialog">
         <div class="dialog-header">
             <div>
-                <p class="eyebrow">Ficha do paciente</p>
+                <p class="eyebrow">Ficha demonstrativa</p>
                 <h2 id="detalhe-nome">Paciente</h2>
             </div>
-            <button id="fechar-detalhes" class="icon-button" type="button" aria-label="Fechar">×</button>
+            <button id="fechar-detalhes" class="icon-control" type="button" aria-label="Fechar">×</button>
         </div>
-        <div class="detail-card">
-            <span>Procedimento registrado</span>
-            <strong id="detalhe-procedimento"></strong>
+
+        <div class="detail-hero">
+            <span class="detail-avatar" id="detalhe-avatar" aria-hidden="true">P</span>
+            <div>
+                <span>Último procedimento</span>
+                <strong id="detalhe-procedimento"></strong>
+            </div>
         </div>
-        <div class="detail-card">
-            <span>Data de criação</span>
+
+        <div class="detail-line">
+            <span>Registro criado</span>
             <strong id="detalhe-data"></strong>
         </div>
+
         <div class="timeline">
             <div class="timeline-dot"></div>
             <div>
-                <strong>Registro criado</strong>
-                <p>Primeiro evento disponível na linha do tempo desta demonstração.</p>
+                <strong>Registro disponível</strong>
+                <p>Evento demonstrativo da linha do tempo.</p>
             </div>
         </div>
     </dialog>
