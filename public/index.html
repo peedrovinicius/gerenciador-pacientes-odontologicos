@@ -25,17 +25,8 @@
                 <button class="nav-item" data-view="pacientes" type="button">
                     <span aria-hidden="true">◎</span> Pacientes
                 </button>
-                <button class="nav-item" data-view="agenda" type="button">
-                    <span aria-hidden="true">□</span> Agenda
-                </button>
-                <button class="nav-item" data-view="tratamentos" type="button">
-                    <span aria-hidden="true">◇</span> Tratamentos
-                </button>
                 <button class="nav-item" data-view="odontograma" type="button">
                     <span aria-hidden="true">◫</span> Odontograma
-                </button>
-                <button class="nav-item" data-view="relatorios" type="button">
-                    <span aria-hidden="true">▥</span> Relatórios
                 </button>
             </nav>
 
@@ -53,6 +44,7 @@
                 </div>
                 <div class="topbar-actions">
                     <span class="status-dot"><i></i> Sistema online</span>
+                    <button id="alternar-tema" class="secondary-button theme-button" type="button">Tema</button>
                     <button id="novo-paciente-topo" class="primary-button" type="button">+ Novo registro</button>
                 </div>
             </header>
@@ -61,8 +53,12 @@
                 <div class="welcome">
                     <div>
                         <p class="eyebrow">Painel clínico</p>
-                        <h2>Gestão simples e organizada do atendimento odontológico</h2>
-                        <p>Acompanhe seus registros demonstrativos, atividade recente e visão geral da operação em um só lugar.</p>
+                        <h2>Gestão odontológica simples, clara e visual</h2>
+                        <p>Uma demonstração enxuta para organizar registros fictícios, acompanhar atividade e visualizar condições odontológicas sem excesso de telas.</p>
+                        <div class="welcome-actions">
+                            <button class="welcome-primary" data-view-target="pacientes" type="button">Abrir pacientes</button>
+                            <button class="welcome-secondary" data-view-target="odontograma" type="button">Ver odontograma</button>
+                        </div>
                     </div>
                     <div class="welcome-chip">Demonstração técnica</div>
                 </div>
@@ -86,7 +82,7 @@
                     <article class="stat-card">
                         <span class="stat-label">Status</span>
                         <strong class="status-value">Ativo</strong>
-                        <small>API disponível</small>
+                        <small>API e interface disponíveis</small>
                     </article>
                 </div>
 
@@ -165,36 +161,47 @@
                 </div>
             </section>
 
-            <section id="view-agenda" class="view placeholder-view">
-                <div class="empty-module">
-                    <span>□</span>
-                    <h2>Agenda</h2>
-                    <p>Módulo preparado para a próxima evolução do projeto: consultas, horários e status de atendimento.</p>
+            <section id="view-odontograma" class="view">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Avaliação visual</p>
+                        <h2>Odontograma demonstrativo</h2>
+                        <p>Clique em um dente para alternar entre hígido, planejado e realizado.</p>
+                    </div>
+                    <button id="resetar-odontograma" class="secondary-button" type="button">Resetar avaliação</button>
                 </div>
-            </section>
 
-            <section id="view-tratamentos" class="view placeholder-view">
-                <div class="empty-module">
-                    <span>◇</span>
-                    <h2>Tratamentos</h2>
-                    <p>Área reservada para planos de tratamento, etapas clínicas e acompanhamento de evolução.</p>
-                </div>
-            </section>
+                <section class="panel odontogram-panel">
+                    <div class="odontogram-toolbar">
+                        <div class="legend">
+                            <span><i class="legend-dot healthy"></i> Hígido</span>
+                            <span><i class="legend-dot planned"></i> Planejado</span>
+                            <span><i class="legend-dot done"></i> Realizado</span>
+                        </div>
+                        <div class="odontogram-summary" aria-live="polite">
+                            <span><strong id="odonto-higidos">32</strong> hígidos</span>
+                            <span><strong id="odonto-planejados">0</strong> planejados</span>
+                            <span><strong id="odonto-realizados">0</strong> realizados</span>
+                        </div>
+                    </div>
 
-            <section id="view-odontograma" class="view placeholder-view">
-                <div class="empty-module">
-                    <span>◫</span>
-                    <h2>Odontograma</h2>
-                    <p>Próxima fase: odontograma interativo com condições atuais, procedimentos planejados e realizados.</p>
-                </div>
-            </section>
+                    <div class="arch-block">
+                        <div class="arch-label">Arcada superior</div>
+                        <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                    </div>
 
-            <section id="view-relatorios" class="view placeholder-view">
-                <div class="empty-module">
-                    <span>▥</span>
-                    <h2>Relatórios</h2>
-                    <p>Estrutura pronta para indicadores de atendimento e exportações demonstrativas.</p>
-                </div>
+                    <div class="midline"><span>Linha média</span></div>
+
+                    <div class="arch-block">
+                        <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
+                        <div class="arch-label">Arcada inferior</div>
+                    </div>
+
+                    <div class="odontogram-note">
+                        <strong>Demonstração visual.</strong>
+                        Este odontograma não substitui prontuário clínico nem registro profissional.
+                    </div>
+                </section>
             </section>
         </main>
     </div>
