@@ -202,10 +202,15 @@ A CI executa:
 ```text
 .
 ├── .github/
-│   └── workflows/
-│       ├── ci.yml
-│       ├── pages.yml
-│       └── screenshots.yml
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.yml
+│   │   ├── config.yml
+│   │   └── feature_request.yml
+│   ├── workflows/
+│   │   ├── ci.yml
+│   │   ├── pages.yml
+│   │   └── screenshots.yml
+│   └── pull_request_template.md
 ├── docs/
 │   └── screenshots/
 │       ├── odontograma.png
@@ -224,6 +229,8 @@ A CI executa:
 ├── tests/
 │   ├── odontogram.test.js
 │   └── server.test.js
+├── .gitignore
+├── CONTRIBUTING.md
 ├── package.json
 ├── package-lock.json
 ├── render.yaml
