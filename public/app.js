@@ -8,13 +8,10 @@ const campoProcedimento = document.getElementById('procedimento');
 const busca = document.getElementById('busca');
 const contadorRegistros = document.getElementById('contador-registros');
 const tituloFormulario = document.getElementById('titulo-formulario');
-const tituloPagina = document.getElementById('titulo-pagina');
 const detalhesPaciente = document.getElementById('detalhes-paciente');
 const detalheNome = document.getElementById('detalhe-nome');
 const detalheProcedimento = document.getElementById('detalhe-procedimento');
 const detalheData = document.getElementById('detalhe-data');
-const detalheAvatar = document.getElementById('detalhe-avatar');
-const heroPacientes = document.getElementById('hero-pacientes');
 
 const STORAGE_PACIENTES = 'clinica-dental-demo-pacientes';
 const STORAGE_ODONTOGRAMA = 'clinica-dental-demo-odontograma';
@@ -103,13 +100,7 @@ function mostrarView(nome) {
         item.classList.toggle('active', item.dataset.view === nome);
     });
 
-    const titulos = {
-        dashboard: 'Visão geral',
-        pacientes: 'Pacientes',
-        odontograma: 'Odontograma',
-    };
 
-    tituloPagina.textContent = titulos[nome] || 'Dashboard';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -124,7 +115,6 @@ function abrirDetalhes(paciente) {
     detalheNome.textContent = paciente.nome;
     detalheProcedimento.textContent = paciente.procedimento;
     detalheData.textContent = formatarData(paciente.criadoEm);
-    detalheAvatar.textContent = iniciais(paciente.nome);
     detalhesPaciente.showModal();
 }
 
@@ -193,7 +183,6 @@ function renderizarPacientes(pacientes) {
 
 function renderizarDashboard(pacientes) {
     document.getElementById('stat-pacientes').textContent = pacientes.length;
-    if (heroPacientes) heroPacientes.textContent = pacientes.length;
     document.getElementById('stat-recentes').textContent = Math.min(pacientes.length, 5);
 
     const procedimentos = new Map();
