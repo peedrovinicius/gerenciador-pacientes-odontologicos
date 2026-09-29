@@ -81,37 +81,6 @@ button:focus-visible, input:focus-visible {
   text-decoration: none;
 }
 
-.brand-symbol {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--wine);
-  color: #fff;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1rem;
-}
-
-.brand strong,
-.brand small { display: block; }
-
-.brand strong {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -.02em;
-}
-
-.brand small {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: .63rem;
-  font-weight: 780;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-
 .top-nav {
   display: flex;
   gap: 5px;
@@ -1147,9 +1116,6 @@ body.dark-theme .detail-row strong { color: #ded7ce; }
     gap: 10px;
   }
 
-  .brand small { display: none; }
-  .brand strong { font-size: .9rem; }
-  .brand-symbol { width: 34px; height: 34px; }
 
   .bar-actions .status-dot { display: none; }
   .bar-actions .primary-button {
@@ -1651,5 +1617,93 @@ body.dark-theme .tooth-button.selected {
   .teeth-row {
     grid-template-columns: repeat(16, 52px);
     padding-top: 28px;
+  }
+}
+
+
+/* acabamento mobile */
+.teeth-row {
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: #c7b9aa transparent;
+}
+
+.tooth-button {
+  scroll-snap-align: center;
+}
+
+.teeth-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.teeth-row::-webkit-scrollbar-thumb {
+  background: #c7b9aa;
+  border-radius: 999px;
+}
+
+.teeth-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (max-width: 720px) {
+  .odontogram-canvas {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .odontogram-layout {
+    gap: 12px;
+  }
+
+  .dental-field {
+    padding: 16px 8px;
+  }
+
+  .tooth-detail-panel {
+    margin-top: 0;
+    padding: 16px;
+  }
+
+  .tooth-detail-panel .detail-tooth-stage {
+    min-height: 125px;
+  }
+
+  .tooth-detail-panel .detail-tooth-shape {
+    transform: scale(.88);
+  }
+
+  .quick-example-grid button {
+    min-height: 44px;
+  }
+
+  .canvas-note {
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 460px) {
+  .odontogram-summary {
+    gap: 12px;
+  }
+
+  .odontogram-summary strong {
+    font-size: 1rem;
+  }
+
+  .odontogram-summary small {
+    font-size: .56rem;
+  }
+
+  .quick-example-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tooth-detail-heading {
+    align-items: center;
+  }
+
+  .tooth-number-large {
+    font-size: 2.6rem;
   }
 }
