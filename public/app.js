@@ -14,8 +14,49 @@ const detalheNome = document.getElementById('detalhe-nome');
 const detalheProcedimento = document.getElementById('detalhe-procedimento');
 const detalheData = document.getElementById('detalhe-data');
 
+const STORAGE_PACIENTES = 'clinica-dental-demo-pacientes';
+const STORAGE_ODONTOGRAMA = 'clinica-dental-demo-odontograma';
+const STORAGE_TEMA = 'clinica-dental-demo-tema';
+
+const DEMO_PACIENTES = [
+    {
+        id: 'demo-ana-martins',
+        nome: 'Ana Martins',
+        procedimento: 'Profilaxia e orientação de higiene',
+        criadoEm: '2026-09-29T12:30:00.000Z',
+    },
+    {
+        id: 'demo-carlos-almeida',
+        nome: 'Carlos Almeida',
+        procedimento: 'Restauração em resina composta',
+        criadoEm: '2026-09-28T16:10:00.000Z',
+    },
+    {
+        id: 'demo-julia-rocha',
+        nome: 'Júlia Rocha',
+        procedimento: 'Avaliação odontológica',
+        criadoEm: '2026-09-27T14:45:00.000Z',
+    },
+    {
+        id: 'demo-lucas-monteiro',
+        nome: 'Lucas Monteiro',
+        procedimento: 'Aplicação tópica de flúor',
+        criadoEm: '2026-09-26T18:20:00.000Z',
+    },
+];
+
+const DENTES_SUPERIORES = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+const DENTES_INFERIORES = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+const STATUS_CICLO = ['healthy', 'planned', 'done'];
+
 let pacienteEmEdicao = null;
 let pacientesCache = [];
+let modoLocal = false;
+let odontograma = carregarOdontograma();
+
+function cloneDemo() {
+    return DEMO_PACIENTES.map((paciente) => ({ ...paciente }));
+}
 
 function iniciais(nome) {
     return String(nome || '?')
@@ -30,6 +71,7 @@ function formatarData(valor) {
     if (!valor) return 'Data não disponível';
     const data = new Date(valor);
     if (Number.isNaN(data.getTime())) return 'Data não disponível';
+
     return new Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: 'short',
@@ -43,6 +85,7 @@ function textoTempo(valor) {
     if (!valor) return 'registro';
     const data = new Date(valor);
     if (Number.isNaN(data.getTime())) return 'registro';
+
     return new Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: '2-digit',
@@ -61,10 +104,7 @@ function mostrarView(nome) {
     const titulos = {
         dashboard: 'Dashboard',
         pacientes: 'Pacientes',
-        agenda: 'Agenda',
-        tratamentos: 'Tratamentos',
         odontograma: 'Odontograma',
-        relatorios: 'Relatórios',
     };
 
     tituloPagina.textContent = titulos[nome] || 'Dashboard';
@@ -153,6 +193,7 @@ function renderizarDashboard(pacientes) {
     document.getElementById('stat-recentes').textContent = Math.min(pacientes.length, 5);
 
     const procedimentos = new Map();
+
     pacientes.forEach((paciente) => {
         const nome = paciente.procedimento.trim();
         const chave = nome.toLocaleLowerCase('pt-BR');
@@ -214,24 +255,29 @@ function renderizarDashboard(pacientes) {
     }
 
     const maior = Math.max(...ranking.map((item) => item.quantidade));
+
     ranking.forEach((item) => {
         const bloco = document.createElement('div');
         bloco.className = 'procedure-item';
 
         const meta = document.createElement('div');
         meta.className = 'procedure-meta';
+
         const nome = document.createElement('span');
         nome.textContent = item.nome;
+
         const qtd = document.createElement('span');
         qtd.textContent = `${item.quantidade}x`;
+
         meta.append(nome, qtd);
 
         const barra = document.createElement('div');
         barra.className = 'bar';
+
         const preenchimento = document.createElement('i');
         preenchimento.style.width = `${Math.max(14, (item.quantidade / maior) * 100)}%`;
-        barra.appendChild(preenchimento);
 
+        barra.appendChild(preenchimento);
         bloco.append(meta, barra);
         resumo.appendChild(bloco);
     });
@@ -239,6 +285,7 @@ function renderizarDashboard(pacientes) {
 
 function aplicarBusca() {
     const termo = busca.value.trim().toLocaleLowerCase('pt-BR');
+
     const filtrados = termo
         ? pacientesCache.filter((paciente) =>
             paciente.nome.toLocaleLowerCase('pt-BR').includes(termo)
@@ -270,19 +317,45 @@ function cancelarEdicao() {
     mensagem.textContent = '';
 }
 
+function carregarPacientesLocais() {
+    try {
+        const salvos = JSON.parse(localStorage.getItem(STORAGE_PACIENTES) || 'null');
+
+        if (Array.isArray(salvos)) {
+            return salvos;
+        }
+    } catch {
+        localStorage.removeItem(STORAGE_PACIENTES);
+    }
+
+    const iniciaisDemo = cloneDemo();
+    localStorage.setItem(STORAGE_PACIENTES, JSON.stringify(iniciaisDemo));
+    return iniciaisDemo;
+}
+
+function salvarPacientesLocais(pacientes) {
+    localStorage.setItem(STORAGE_PACIENTES, JSON.stringify(pacientes));
+}
+
 async function carregarPacientes() {
     try {
-        const resposta = await fetch('/api/pacientes', { headers: { Accept: 'application/json' } });
-        if (!resposta.ok) throw new Error('Não foi possível carregar os registros.');
+        const resposta = await fetch('/api/pacientes', {
+            headers: { Accept: 'application/json' },
+        });
+
+        if (!resposta.ok) {
+            throw new Error('API indisponível');
+        }
 
         pacientesCache = await resposta.json();
-        aplicarBusca();
-        renderizarDashboard(pacientesCache);
-    } catch (erro) {
-        mensagem.textContent = erro.message;
-        renderizarPacientes([]);
-        renderizarDashboard([]);
+        modoLocal = false;
+    } catch {
+        modoLocal = true;
+        pacientesCache = carregarPacientesLocais();
     }
+
+    aplicarBusca();
+    renderizarDashboard(pacientesCache);
 }
 
 async function excluirPaciente(id, botao) {
@@ -292,13 +365,18 @@ async function excluirPaciente(id, botao) {
     mensagem.textContent = '';
 
     try {
-        const resposta = await fetch(`/api/pacientes/${encodeURIComponent(id)}`, {
-            method: 'DELETE',
-        });
+        if (modoLocal) {
+            pacientesCache = pacientesCache.filter((paciente) => paciente.id !== id);
+            salvarPacientesLocais(pacientesCache);
+        } else {
+            const resposta = await fetch(`/api/pacientes/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+            });
 
-        if (!resposta.ok) {
-            const resultado = await resposta.json();
-            throw new Error(resultado.erro || 'Não foi possível excluir o registro.');
+            if (!resposta.ok) {
+                const resultado = await resposta.json();
+                throw new Error(resultado.erro || 'Não foi possível excluir o registro.');
+            }
         }
 
         if (pacienteEmEdicao === id) cancelarEdicao();
@@ -310,6 +388,26 @@ async function excluirPaciente(id, botao) {
     }
 }
 
+function salvarRegistroLocal(dados, editando) {
+    if (editando) {
+        pacientesCache = pacientesCache.map((paciente) =>
+            paciente.id === pacienteEmEdicao
+                ? { ...paciente, ...dados }
+                : paciente);
+    } else {
+        pacientesCache = [
+            ...pacientesCache,
+            {
+                id: `local-${Date.now()}`,
+                ...dados,
+                criadoEm: new Date().toISOString(),
+            },
+        ];
+    }
+
+    salvarPacientesLocais(pacientesCache);
+}
+
 formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     mensagem.textContent = '';
@@ -317,27 +415,33 @@ formulario.addEventListener('submit', async (evento) => {
 
     const dados = Object.fromEntries(new FormData(formulario));
     const editando = pacienteEmEdicao !== null;
-    const url = editando
-        ? `/api/pacientes/${encodeURIComponent(pacienteEmEdicao)}`
-        : '/api/pacientes';
-    const method = editando ? 'PUT' : 'POST';
 
     try {
-        const resposta = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados),
-        });
+        if (modoLocal) {
+            salvarRegistroLocal(dados, editando);
+        } else {
+            const url = editando
+                ? `/api/pacientes/${encodeURIComponent(pacienteEmEdicao)}`
+                : '/api/pacientes';
 
-        const resultado = await resposta.json();
-        if (!resposta.ok) {
-            throw new Error(resultado.erro || 'Não foi possível salvar o registro.');
+            const resposta = await fetch(url, {
+                method: editando ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados),
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || 'Não foi possível salvar o registro.');
+            }
         }
 
         cancelarEdicao();
         mensagem.textContent = editando
             ? 'Registro atualizado com sucesso.'
             : 'Registro salvo com sucesso.';
+
         await carregarPacientes();
     } catch (erro) {
         mensagem.textContent = erro.message;
@@ -345,6 +449,90 @@ formulario.addEventListener('submit', async (evento) => {
         botaoSalvar.disabled = false;
     }
 });
+
+function estadoInicialOdontograma() {
+    return [...DENTES_SUPERIORES, ...DENTES_INFERIORES].reduce((estado, dente) => {
+        estado[dente] = 'healthy';
+        return estado;
+    }, {});
+}
+
+function carregarOdontograma() {
+    try {
+        const salvo = JSON.parse(localStorage.getItem(STORAGE_ODONTOGRAMA) || 'null');
+
+        if (salvo && typeof salvo === 'object') {
+            return { ...estadoInicialOdontograma(), ...salvo };
+        }
+    } catch {
+        localStorage.removeItem(STORAGE_ODONTOGRAMA);
+    }
+
+    return estadoInicialOdontograma();
+}
+
+function salvarOdontograma() {
+    localStorage.setItem(STORAGE_ODONTOGRAMA, JSON.stringify(odontograma));
+}
+
+function nomeStatus(status) {
+    if (status === 'planned') return 'planejado';
+    if (status === 'done') return 'realizado';
+    return 'hígido';
+}
+
+function atualizarResumoOdontograma() {
+    const valores = Object.values(odontograma);
+    document.getElementById('odonto-higidos').textContent = valores.filter((status) => status === 'healthy').length;
+    document.getElementById('odonto-planejados').textContent = valores.filter((status) => status === 'planned').length;
+    document.getElementById('odonto-realizados').textContent = valores.filter((status) => status === 'done').length;
+}
+
+function criarDente(numero) {
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.className = `tooth-button ${odontograma[numero]}`;
+    botao.setAttribute('aria-label', `Dente ${numero}, ${nomeStatus(odontograma[numero])}`);
+
+    const forma = document.createElement('span');
+    forma.className = 'tooth-shape';
+    forma.setAttribute('aria-hidden', 'true');
+
+    const rotulo = document.createElement('span');
+    rotulo.className = 'tooth-number';
+    rotulo.textContent = numero;
+
+    botao.append(forma, rotulo);
+
+    botao.addEventListener('click', () => {
+        const atual = odontograma[numero] || 'healthy';
+        const indice = STATUS_CICLO.indexOf(atual);
+        odontograma[numero] = STATUS_CICLO[(indice + 1) % STATUS_CICLO.length];
+        salvarOdontograma();
+        renderizarOdontograma();
+    });
+
+    return botao;
+}
+
+function renderizarOdontograma() {
+    const superior = document.getElementById('arcada-superior');
+    const inferior = document.getElementById('arcada-inferior');
+
+    superior.replaceChildren(...DENTES_SUPERIORES.map(criarDente));
+    inferior.replaceChildren(...DENTES_INFERIORES.map(criarDente));
+    atualizarResumoOdontograma();
+}
+
+function aplicarTemaSalvo() {
+    const tema = localStorage.getItem(STORAGE_TEMA);
+    document.body.classList.toggle('dark-theme', tema === 'dark');
+}
+
+function alternarTema() {
+    const escuro = document.body.classList.toggle('dark-theme');
+    localStorage.setItem(STORAGE_TEMA, escuro ? 'dark' : 'light');
+}
 
 document.querySelectorAll('.nav-item').forEach((item) => {
     item.addEventListener('click', () => mostrarView(item.dataset.view));
@@ -356,11 +544,21 @@ document.querySelectorAll('[data-view-target]').forEach((item) => {
 
 document.getElementById('novo-paciente').addEventListener('click', abrirNovoRegistro);
 document.getElementById('novo-paciente-topo').addEventListener('click', abrirNovoRegistro);
+document.getElementById('alternar-tema').addEventListener('click', alternarTema);
+document.getElementById('resetar-odontograma').addEventListener('click', () => {
+    odontograma = estadoInicialOdontograma();
+    salvarOdontograma();
+    renderizarOdontograma();
+});
 document.getElementById('fechar-detalhes').addEventListener('click', () => detalhesPaciente.close());
+
 detalhesPaciente.addEventListener('click', (evento) => {
     if (evento.target === detalhesPaciente) detalhesPaciente.close();
 });
+
 botaoCancelar.addEventListener('click', cancelarEdicao);
 busca.addEventListener('input', aplicarBusca);
 
+aplicarTemaSalvo();
+renderizarOdontograma();
 carregarPacientes();
