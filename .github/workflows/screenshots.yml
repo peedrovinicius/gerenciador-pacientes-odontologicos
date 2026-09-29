@@ -1,0 +1,87 @@
+name: Atualizar screenshots do README
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/**"
+      - ".github/workflows/screenshots.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: readme-screenshots
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Preparar pastas
+        run: |
+          mkdir -p docs/screenshots
+          rm -rf /tmp/odontogram-public
+          cp -R public /tmp/odontogram-public
+
+      - name: Preparar tela do odontograma
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("/tmp/odontogram-public/index.html")
+          html = path.read_text(encoding="utf-8")
+          html = html.replace(
+              '<button class="nav-item active" data-view="dashboard" type="button" aria-current="page">Visão geral</button>',
+              '<button class="nav-item" data-view="dashboard" type="button">Visão geral</button>',
+          )
+          html = html.replace(
+              '<button class="nav-item" data-view="odontograma" type="button">Odontograma</button>',
+              '<button class="nav-item active" data-view="odontograma" type="button" aria-current="page">Odontograma</button>',
+          )
+          html = html.replace(
+              '<section id="view-dashboard" class="view active"',
+              '<section id="view-dashboard" class="view"',
+          )
+          html = html.replace(
+              '<section id="view-odontograma" class="view">',
+              '<section id="view-odontograma" class="view active">',
+          )
+          path.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Iniciar servidores estáticos
+        run: |
+          python3 -m http.server 4173 --directory public >/tmp/dashboard-server.log 2>&1 &
+          python3 -m http.server 4174 --directory /tmp/odontogram-public >/tmp/odontogram-server.log 2>&1 &
+          sleep 2
+
+      - name: Capturar telas
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          if [ -z "$CHROME" ]; then
+            echo "Chrome/Chromium não encontrado no runner."
+            exit 1
+          fi
+
+          "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --hide-scrollbars             --force-device-scale-factor=1             --window-size=1440,1100             --virtual-time-budget=2500             --screenshot="$GITHUB_WORKSPACE/docs/screenshots/visao-geral.png"             http://127.0.0.1:4173/
+
+          "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --hide-scrollbars             --force-device-scale-factor=1             --window-size=1440,1100             --virtual-time-budget=2500             --screenshot="$GITHUB_WORKSPACE/docs/screenshots/odontograma.png"             http://127.0.0.1:4174/
+
+      - name: Publicar screenshots atualizados
+        run: |
+          git add docs/screenshots
+          if git diff --cached --quiet; then
+            echo "Screenshots já estão atualizados."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: atualizar screenshots da interface"
+          git push
