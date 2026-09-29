@@ -20,6 +20,18 @@ O projeto tem somente três áreas:
 
 O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar uma aplicação pequena, funcional, bem apresentada e fácil de entender.
 
+## Interface
+
+### Visão geral
+
+![Visão geral do Gerenciador](docs/screenshots/visao-geral.png)
+
+### Odontograma
+
+![Odontograma interativo do Gerenciador](docs/screenshots/odontograma.png)
+
+As capturas são geradas automaticamente a partir da própria interface pelo GitHub Actions quando arquivos do frontend são alterados.
+
 ## Funcionalidades
 
 ### Visão geral
@@ -65,6 +77,7 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 - identidade visual editorial em marrom, vinho, marfim e tons neutros;
 - logomarca **Gerenciador — Pacientes Odontológicos** adaptada à paleta do site;
+- favicon próprio baseado na identidade visual;
 - layout editorial e responsivo;
 - tema claro e escuro;
 - dados fictícios iniciais para demonstração;
@@ -178,7 +191,10 @@ A CI executa:
 
 - instalação das dependências;
 - verificação de sintaxe do JavaScript;
-- testes automatizados;
+- testes automatizados da API;
+- testes do modelo do odontograma;
+- testes de compatibilidade com o formato antigo salvo no navegador;
+- testes de persistência simulada em `localStorage`;
 - auditoria das dependências de produção.
 
 ## Estrutura
@@ -188,16 +204,25 @@ A CI executa:
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml
-│       └── pages.yml
+│       ├── pages.yml
+│       └── screenshots.yml
+├── docs/
+│   └── screenshots/
+│       ├── odontograma.png
+│       └── visao-geral.png
 ├── public/
 │   ├── app.js
+│   ├── favicon.svg
+│   ├── gerenciador-logo-marrom.svg
 │   ├── index.html
+│   ├── odontogram-model.js
 │   └── styles.css
 ├── src/
 │   ├── app.js
 │   ├── store.js
 │   └── validation.js
 ├── tests/
+│   ├── odontogram.test.js
 │   └── server.test.js
 ├── package.json
 ├── package-lock.json
