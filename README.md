@@ -4,69 +4,89 @@
 ![Node.js](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
-[Demo](https://gerenciador-pacientes-odontologicos.onrender.com) · [Issues](https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos/issues) · [Como contribuir](CONTRIBUTING.md)
+Aplicação web deliberadamente simples para demonstrar organização de registros odontológicos fictícios, integração frontend/backend e uma interface clínica enxuta.
 
-Aplicação web para cadastro, consulta, edição e exclusão de registros odontológicos, desenvolvida com **HTML, CSS, JavaScript, Node.js e Express**.
+**Demo principal:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/
 
-## Acesse o projeto
+> Projeto demonstrativo público. Não utilize dados reais de pacientes.
 
-**[Demo online](https://gerenciador-pacientes-odontologicos.onrender.com)**
+## Escopo
 
-> Demonstração técnica pública. Utilize apenas dados fictícios. O projeto não possui autenticação, autorização ou persistência em banco de dados e não deve receber informações reais de pacientes.
+O projeto tem somente três áreas:
 
-## Sobre o projeto
+1. **Visão geral**
+2. **Pacientes**
+3. **Odontograma**
 
-O projeto simula um fluxo simples de atendimento: a interface envia dados para uma API, a aplicação Express valida as entradas e o armazenamento isolado mantém os registros em memória, enquanto a interface consulta, edita e exclui os registros cadastrados.
-
-O objetivo é demonstrar, de forma prática, a integração entre **frontend e backend**, operações HTTP, validação de dados, manipulação segura do DOM, testes automatizados e integração contínua.
+O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar uma aplicação pequena, funcional, bem apresentada e fácil de entender.
 
 ## Funcionalidades
 
-- cadastro de paciente e procedimento;
-- consulta dos registros cadastrados;
-- edição de registros existentes;
-- exclusão de registros com confirmação;
-- validação dos campos obrigatórios e dos tipos recebidos;
-- limite de tamanho para os dados recebidos;
-- geração de identificador único e data de criação;
-- mensagens de sucesso e erro no frontend;
-- endpoint de health check;
-- respostas HTTP adequadas para sucesso, erro de validação e recurso inexistente.
+### Visão geral
 
-## Arquitetura
+- quantidade de pacientes cadastrados;
+- quantidade de registros recentes;
+- quantidade de tipos de procedimentos;
+- lista dos registros mais recentes;
+- resumo visual dos procedimentos cadastrados;
+- indicador de disponibilidade da demonstração.
 
-```text
-Navegador
-   │
-   │ HTTP / JSON
-   ▼
-Frontend (HTML/CSS/JavaScript)
-   │
-   │ fetch()
-   ▼
-API Node.js + Express
-   │
-   ├── aplicação e rotas
-   ├── validação
-   └── armazenamento
-       │
-       ├── GET    /api/health
-       ├── GET    /api/pacientes
-       ├── POST   /api/pacientes
-       ├── PUT    /api/pacientes/:id
-       └── DELETE /api/pacientes/:id
-       │
-       ▼
-Memória da aplicação
-```
+### Pacientes
 
-A persistência é **intencionalmente em memória**. Os registros são perdidos quando o processo é reiniciado. Essa decisão mantém o escopo concentrado na integração HTTP entre frontend e backend.
+- cadastro de nome do paciente e procedimento;
+- listagem dos registros;
+- busca por paciente ou procedimento;
+- visualização de ficha demonstrativa;
+- edição de registro existente;
+- exclusão com confirmação;
+- mensagens de sucesso e erro.
+
+### Odontograma
+
+- dentição adulta representada pelo sistema FDI;
+- 32 elementos dentários;
+- interação por clique;
+- três estados demonstrativos:
+  - hígido;
+  - planejado;
+  - realizado;
+- contadores por estado;
+- redefinição da avaliação;
+- armazenamento local do estado do odontograma no navegador.
+
+### Interface
+
+- layout responsivo;
+- tema claro e escuro;
+- dados fictícios iniciais para demonstração;
+- navegação entre as três áreas sem recarregar a página.
+
+## Como a demonstração funciona
+
+A interface pode operar de duas formas.
+
+### Com a API Express
+
+Quando executada junto ao backend, o frontend usa:
+
+- `GET /api/pacientes`
+- `POST /api/pacientes`
+- `PUT /api/pacientes/:id`
+- `DELETE /api/pacientes/:id`
+
+Os registros ficam em memória durante a execução do servidor.
+
+### Como demonstração estática
+
+No GitHub Pages não existe backend Node.js. Quando a API não está disponível, a interface utiliza `localStorage` para manter a demonstração funcional no próprio navegador.
+
+Esse fallback é usado apenas para fins de portfólio e não representa persistência clínica real.
 
 ## API
 
 ### `GET /api/health`
 
-Retorna o estado básico da aplicação.
+Retorna:
 
 ```json
 {
@@ -76,111 +96,90 @@ Retorna o estado básico da aplicação.
 
 ### `GET /api/pacientes`
 
-Retorna todos os registros cadastrados na execução atual.
+Retorna os registros da execução atual.
 
 ### `POST /api/pacientes`
 
-Recebe um objeto JSON com:
+Exemplo de corpo:
 
 ```json
 {
   "nome": "Maria Silva",
-  "procedimento": "Limpeza"
+  "procedimento": "Profilaxia"
 }
 ```
 
-Em caso de sucesso, retorna `201 Created` com o registro criado, incluindo `id` e `criadoEm`. Entradas inválidas retornam `400 Bad Request`.
-
 ### `PUT /api/pacientes/:id`
 
-Atualiza nome e procedimento de um registro existente. Mantém o `id` e a data original de criação. Retorna `200 OK` em caso de sucesso, `400 Bad Request` para dados inválidos e `404 Not Found` quando o registro não existe.
+Atualiza nome e procedimento de um registro existente.
 
 ### `DELETE /api/pacientes/:id`
 
-Remove um registro existente. Retorna `204 No Content` em caso de sucesso e `404 Not Found` quando o registro não existe.
+Remove um registro existente.
 
-## Segurança e validação
+## Validação e segurança
 
-O backend não confia diretamente no corpo recebido. Antes de criar ou atualizar um registro, exige `Content-Type: application/json`, valida o tipo dos campos, remove espaços extras, verifica obrigatoriedade e aplica limites de tamanho. O payload JSON possui limite de `10kb`, e tipo de conteúdo incorreto, JSON malformado ou payload acima do limite recebe resposta controlada da API.
+O backend:
 
-A aplicação também remove o cabeçalho `X-Powered-By`, impede cache das rotas `/api` e envia cabeçalhos básicos de proteção contra MIME sniffing, embedding em frames e envio desnecessário de referência.
+- exige `Content-Type: application/json` em criação e atualização;
+- valida nome e procedimento;
+- remove espaços extras;
+- aplica limites de tamanho;
+- limita o payload JSON a `10kb`;
+- retorna respostas controladas para JSON inválido;
+- remove `X-Powered-By`;
+- desabilita cache nas rotas `/api`;
+- envia cabeçalhos básicos contra MIME sniffing e embedding em frames.
 
-No frontend, os dados retornados pela API são inseridos no DOM com `textContent` e elementos criados via JavaScript, evitando a interpolação direta de conteúdo recebido em `innerHTML`.
+No frontend, dados recebidos são inseridos por propriedades como `textContent`, sem interpolação direta em `innerHTML`.
 
 ## Tecnologias
 
-- **HTML5** — estrutura da interface;
-- **CSS3** — layout e responsividade;
-- **JavaScript** — interação e consumo da API;
-- **Node.js 24 LTS** — ambiente de execução;
-- **Express 4.22.3** — servidor HTTP e API;
-- **Node Test Runner** — testes automatizados;
-- **GitHub Actions** — integração contínua.
+- HTML5
+- CSS3
+- JavaScript
+- Node.js 24
+- Express 4
+- Node Test Runner
+- GitHub Actions
+- GitHub Pages
 
-## Testes e CI
-
-Os testes podem ser executados localmente com:
-
-```bash
-npm test
-```
-
-A suíte cobre validação dos dados e os principais fluxos da API, incluindo cadastro, atualização e exclusão, além de JSON malformado, excesso de payload, cabeçalhos de segurança e cenários de erro correspondentes.
-
-A CI executa automaticamente:
-
-```bash
-npm ci
-node --check server.js
-npm test
-npm audit --omit=dev --audit-level=high
-```
-
-O workflow é acionado em `push` e `pull_request` na branch `main`.
-
-## Deploy
-
-O repositório inclui `render.yaml` com a configuração reproduzível do serviço:
-
-- runtime Node.js;
-- instalação determinística com `npm ci`;
-- inicialização com `npm start`;
-- health check em `/api/health`;
-- deploy automático a partir da branch `main`.
-
-O serviço público permanece uma demonstração técnica e não deve receber dados reais de pacientes.
-
-## Como executar localmente
-
-1. Instale o Node.js 24 LTS.
-2. Clone o repositório:
+## Executar localmente
 
 ```bash
 git clone https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos.git
 cd gerenciador-pacientes-odontologicos
-```
-
-3. Instale exatamente as dependências registradas no lockfile:
-
-```bash
 npm ci
-```
-
-4. Inicie a aplicação:
-
-```bash
 npm start
 ```
 
-5. Acesse `http://localhost:3000`.
+Acesse:
 
-## Estrutura do projeto
+```text
+http://localhost:3000
+```
+
+## Testes
+
+```bash
+npm test
+```
+
+A CI executa:
+
+- instalação das dependências;
+- verificação de sintaxe do JavaScript;
+- testes automatizados;
+- auditoria das dependências de produção.
+
+## Estrutura
 
 ```text
 .
 ├── .github/
 │   └── workflows/
-│       └── ci.yml
+│       ├── ci.yml
+│       └── pages.yml
 ├── public/
 │   ├── app.js
 │   ├── index.html
@@ -198,22 +197,20 @@ npm start
 └── README.md
 ```
 
-## Contribuindo
+## Limitações intencionais
 
-Contribuições externas são bem-vindas. Antes de abrir um Pull Request, consulte o [guia de contribuição](CONTRIBUTING.md) e use as issues para alinhar o escopo da mudança.
+- não possui banco de dados;
+- não possui autenticação ou autorização;
+- não deve receber informações reais de pacientes;
+- não é um prontuário odontológico de produção;
+- não inclui agenda, financeiro, documentos, prescrições ou outros módulos clínicos;
+- a persistência do backend é somente em memória;
+- o modo estático utiliza apenas o armazenamento local do navegador.
 
-Use somente dados fictícios em exemplos, testes, issues e Pull Requests.
+## Regra de documentação
 
-## Limitações
+O README acompanha o escopo real da aplicação.
 
-- os dados são armazenados apenas em memória;
-- não há autenticação ou autorização;
-- o projeto não possui banco de dados;
-- não deve ser utilizado como sistema clínico de produção;
-- o escopo desta versão é demonstrar, de forma isolada, integração frontend/backend e operações CRUD sobre uma API REST.
+Qualquer funcionalidade adicionada ao projeto deve ser registrada neste arquivo na mesma alteração. Da mesma forma, uma funcionalidade removida da aplicação deve ser removida do README.
 
-## Status
-
-**Versão demonstrativa concluída.**
-
-Persistência em banco, autenticação e recursos clínicos reais estão deliberadamente fora do escopo desta aplicação e não são requisitos pendentes desta versão.
+Assim, a documentação não anuncia recursos inexistentes e a interface não mantém recursos sem documentação.
