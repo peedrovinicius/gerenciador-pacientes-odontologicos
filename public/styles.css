@@ -1523,13 +1523,13 @@ body.dark-theme .brand-logo-image {
   border-radius: 36% 36% 29% 29% / 20% 20% 72% 72%;
 }
 
-.tooth-shape.incisivo-inferior-central {
+.tooth-shape.incisivo-inferior-estreito {
   width: 12px;
   height: 31px;
   border-radius: 34% 34% 25% 25% / 16% 16% 76% 76%;
 }
 
-.tooth-shape.incisivo-inferior-central::after {
+.tooth-shape.incisivo-inferior-estreito::after {
   width: 5px;
   height: 13px;
 }
