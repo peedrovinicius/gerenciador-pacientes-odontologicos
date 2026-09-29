@@ -45,13 +45,20 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 - dentição adulta representada pelo sistema FDI;
 - 32 elementos dentários;
-- interação por clique;
+- desenho visual diferenciado para molares, pré-molares, caninos e incisivos;
+- quatro incisivos inferiores centrais representados com anatomia mais estreita;
+- seleção de um dente por clique;
+- painel lateral com número FDI, nome anatômico, condição e status;
 - três estados demonstrativos:
   - hígido;
   - planejado;
   - realizado;
+- exemplos fictícios pré-carregados de cárie, restauração, canal e profilaxia;
+- atalhos para aplicar esses quatro exemplos ao dente selecionado;
+- cárie e canal demonstrados como planejados;
+- restauração e profilaxia demonstradas como realizadas;
 - contadores por estado;
-- redefinição da avaliação;
+- botão para restaurar os exemplos iniciais;
 - armazenamento local do estado do odontograma no navegador.
 
 ### Interface
