@@ -56,8 +56,8 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 ### Interface
 
-- identidade visual própria em azul-marinho, azul vivo, branco e cinza-claro;
-- cabeçalho com a marca **Gerenciador — Pacientes Odontológicos**;
+- identidade visual editorial em marrom, vinho, marfim e tons neutros;
+- logomarca **Gerenciador — Pacientes Odontológicos** adaptada à paleta do site;
 - layout editorial e responsivo;
 - tema claro e escuro;
 - dados fictícios iniciais para demonstração;
