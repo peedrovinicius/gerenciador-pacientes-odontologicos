@@ -52,6 +52,7 @@ let pacienteEmEdicao = null;
 let pacientesCache = [];
 let modoLocal = false;
 let odontograma = carregarOdontograma();
+let denteSelecionado = 16;
 
 function cloneDemo() {
     return DEMO_PACIENTES.map((paciente) => ({ ...paciente }));
@@ -443,25 +444,61 @@ formulario.addEventListener('submit', async (evento) => {
     }
 });
 
+function registroOdontograma(status = 'healthy', condicao = null) {
+    return { status, condicao };
+}
+
 function estadoInicialOdontograma() {
-    return [...DENTES_SUPERIORES, ...DENTES_INFERIORES].reduce((estado, dente) => {
-        estado[dente] = 'healthy';
-        return estado;
+    const estado = [...DENTES_SUPERIORES, ...DENTES_INFERIORES].reduce((resultado, dente) => {
+        resultado[dente] = registroOdontograma();
+        return resultado;
     }, {});
+
+    // Exemplos puramente fictícios para a demonstração visual.
+    estado[16] = registroOdontograma('planned', 'carie');
+    estado[12] = registroOdontograma('done', 'restauracao');
+    estado[24] = registroOdontograma('planned', 'canal');
+    estado[26] = registroOdontograma('done', 'profilaxia');
+    estado[46] = registroOdontograma('done', 'restauracao');
+    estado[44] = registroOdontograma('planned', 'carie');
+    estado[36] = registroOdontograma('done', 'profilaxia');
+
+    return estado;
+}
+
+function normalizarRegistroOdontograma(valor) {
+    if (typeof valor === 'string') {
+        return registroOdontograma(STATUS_CICLO.includes(valor) ? valor : 'healthy');
+    }
+
+    if (valor && typeof valor === 'object') {
+        return registroOdontograma(
+            STATUS_CICLO.includes(valor.status) ? valor.status : 'healthy',
+            typeof valor.condicao === 'string' ? valor.condicao : null,
+        );
+    }
+
+    return registroOdontograma();
 }
 
 function carregarOdontograma() {
+    const inicial = estadoInicialOdontograma();
+
     try {
         const salvo = JSON.parse(localStorage.getItem(STORAGE_ODONTOGRAMA) || 'null');
 
         if (salvo && typeof salvo === 'object') {
-            return { ...estadoInicialOdontograma(), ...salvo };
+            Object.keys(inicial).forEach((dente) => {
+                if (Object.prototype.hasOwnProperty.call(salvo, dente)) {
+                    inicial[dente] = normalizarRegistroOdontograma(salvo[dente]);
+                }
+            });
         }
     } catch {
         localStorage.removeItem(STORAGE_ODONTOGRAMA);
     }
 
-    return estadoInicialOdontograma();
+    return inicial;
 }
 
 function salvarOdontograma() {
@@ -469,26 +506,131 @@ function salvarOdontograma() {
 }
 
 function nomeStatus(status) {
-    if (status === 'planned') return 'planejado';
-    if (status === 'done') return 'realizado';
-    return 'hígido';
+    if (status === 'planned') return 'Planejado';
+    if (status === 'done') return 'Realizado';
+    return 'Hígido';
+}
+
+function dadosCondicao(condicao) {
+    const dados = {
+        carie: {
+            label: 'Cárie',
+            status: 'planned',
+            descricao: 'Exemplo fictício de lesão cariosa indicada para avaliação restauradora.',
+        },
+        restauracao: {
+            label: 'Restauração',
+            status: 'done',
+            descricao: 'Exemplo fictício de restauração registrada como procedimento realizado.',
+        },
+        canal: {
+            label: 'Canal',
+            status: 'planned',
+            descricao: 'Exemplo fictício de tratamento endodôntico registrado como planejado.',
+        },
+        profilaxia: {
+            label: 'Profilaxia',
+            status: 'done',
+            descricao: 'Exemplo fictício de procedimento preventivo registrado como realizado.',
+        },
+    };
+
+    return dados[condicao] || {
+        label: 'Sem condição',
+        status: 'healthy',
+        descricao: 'Dente sem alteração demonstrativa registrada.',
+    };
+}
+
+function tipoDente(numero) {
+    const posicao = Number(String(numero).slice(-1));
+
+    if (posicao === 1) return 'incisivo-central';
+    if (posicao === 2) return 'incisivo-lateral';
+    if (posicao === 3) return 'canino';
+    if (posicao === 4 || posicao === 5) return 'premolar';
+    return 'molar';
+}
+
+function classeAnatomicaDente(numero) {
+    const classes = [tipoDente(numero)];
+
+    if ([31, 32, 41, 42].includes(numero)) {
+        classes.push('incisivo-inferior-central');
+    } else if ([33, 43].includes(numero)) {
+        classes.push('canino-inferior');
+    }
+
+    return classes.join(' ');
+}
+
+function nomeAnatomicoDente(numero) {
+    const quadrante = Number(String(numero)[0]);
+    const posicao = Number(String(numero)[1]);
+
+    const tipos = {
+        1: 'Incisivo central',
+        2: 'Incisivo lateral',
+        3: 'Canino',
+        4: 'Primeiro pré-molar',
+        5: 'Segundo pré-molar',
+        6: 'Primeiro molar',
+        7: 'Segundo molar',
+        8: 'Terceiro molar',
+    };
+
+    const localizacoes = {
+        1: 'superior direito',
+        2: 'superior esquerdo',
+        3: 'inferior esquerdo',
+        4: 'inferior direito',
+    };
+
+    return `${tipos[posicao] || 'Dente'} ${localizacoes[quadrante] || ''}`.trim();
 }
 
 function atualizarResumoOdontograma() {
-    const valores = Object.values(odontograma);
-    document.getElementById('odonto-higidos').textContent = valores.filter((status) => status === 'healthy').length;
-    document.getElementById('odonto-planejados').textContent = valores.filter((status) => status === 'planned').length;
-    document.getElementById('odonto-realizados').textContent = valores.filter((status) => status === 'done').length;
+    const valores = Object.values(odontograma).map((item) => normalizarRegistroOdontograma(item));
+
+    document.getElementById('odonto-higidos').textContent =
+        valores.filter((item) => item.status === 'healthy').length;
+    document.getElementById('odonto-planejados').textContent =
+        valores.filter((item) => item.status === 'planned').length;
+    document.getElementById('odonto-realizados').textContent =
+        valores.filter((item) => item.status === 'done').length;
+}
+
+function renderizarDetalheDente() {
+    const registro = normalizarRegistroOdontograma(odontograma[denteSelecionado]);
+    const condicao = dadosCondicao(registro.condicao);
+
+    document.getElementById('odonto-detalhe-numero').textContent = denteSelecionado;
+    document.getElementById('odonto-detalhe-nome').textContent = nomeAnatomicoDente(denteSelecionado);
+    document.getElementById('odonto-detalhe-condicao').textContent = condicao.label;
+    document.getElementById('odonto-detalhe-descricao').textContent = condicao.descricao;
+
+    const status = document.getElementById('odonto-detalhe-status');
+    status.textContent = nomeStatus(registro.status);
+    status.className = `detail-status ${registro.status}`;
+
+    const forma = document.getElementById('odonto-detalhe-forma');
+    forma.className = `detail-tooth-shape ${classeAnatomicaDente(denteSelecionado)} ${registro.status}`;
 }
 
 function criarDente(numero) {
+    const registro = normalizarRegistroOdontograma(odontograma[numero]);
+    const condicao = dadosCondicao(registro.condicao);
+
     const botao = document.createElement('button');
     botao.type = 'button';
-    botao.className = `tooth-button ${odontograma[numero]}`;
-    botao.setAttribute('aria-label', `Dente ${numero}, ${nomeStatus(odontograma[numero])}`);
+    botao.className = `tooth-button ${registro.status} ${numero === denteSelecionado ? 'selected' : ''}`;
+    botao.setAttribute(
+        'aria-label',
+        `Dente ${numero}, ${nomeStatus(registro.status)}${registro.condicao ? `, ${condicao.label}` : ''}`,
+    );
 
     const forma = document.createElement('span');
-    forma.className = 'tooth-shape';
+    forma.className = `tooth-shape ${classeAnatomicaDente(numero)}`;
     forma.setAttribute('aria-hidden', 'true');
 
     const rotulo = document.createElement('span');
@@ -497,11 +639,15 @@ function criarDente(numero) {
 
     botao.append(forma, rotulo);
 
+    if (registro.condicao) {
+        const etiqueta = document.createElement('span');
+        etiqueta.className = `tooth-condition ${registro.condicao}`;
+        etiqueta.textContent = condicao.label;
+        botao.appendChild(etiqueta);
+    }
+
     botao.addEventListener('click', () => {
-        const atual = odontograma[numero] || 'healthy';
-        const indice = STATUS_CICLO.indexOf(atual);
-        odontograma[numero] = STATUS_CICLO[(indice + 1) % STATUS_CICLO.length];
-        salvarOdontograma();
+        denteSelecionado = numero;
         renderizarOdontograma();
     });
 
@@ -515,6 +661,29 @@ function renderizarOdontograma() {
     superior.replaceChildren(...DENTES_SUPERIORES.map(criarDente));
     inferior.replaceChildren(...DENTES_INFERIORES.map(criarDente));
     atualizarResumoOdontograma();
+    renderizarDetalheDente();
+}
+
+function aplicarCondicaoSelecionada(condicaoId) {
+    const condicao = dadosCondicao(condicaoId);
+
+    odontograma[denteSelecionado] = registroOdontograma(condicao.status, condicaoId);
+    salvarOdontograma();
+    renderizarOdontograma();
+}
+
+function alternarStatusSelecionado() {
+    const registro = normalizarRegistroOdontograma(odontograma[denteSelecionado]);
+    const indice = STATUS_CICLO.indexOf(registro.status);
+    registro.status = STATUS_CICLO[(indice + 1) % STATUS_CICLO.length];
+
+    if (registro.status === 'healthy') {
+        registro.condicao = null;
+    }
+
+    odontograma[denteSelecionado] = registro;
+    salvarOdontograma();
+    renderizarOdontograma();
 }
 
 function aplicarTemaSalvo() {
@@ -540,8 +709,15 @@ document.getElementById('novo-paciente-topo').addEventListener('click', abrirNov
 document.getElementById('alternar-tema').addEventListener('click', alternarTema);
 document.getElementById('resetar-odontograma').addEventListener('click', () => {
     odontograma = estadoInicialOdontograma();
+    denteSelecionado = 16;
     salvarOdontograma();
     renderizarOdontograma();
+});
+
+document.getElementById('alternar-status-dente').addEventListener('click', alternarStatusSelecionado);
+
+document.querySelectorAll('[data-odontograma-condicao]').forEach((botao) => {
+    botao.addEventListener('click', () => aplicarCondicaoSelecionada(botao.dataset.odontogramaCondicao));
 });
 document.getElementById('fechar-detalhes').addEventListener('click', () => detalhesPaciente.close());
 
