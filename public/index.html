@@ -3,289 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Demonstração de um sistema web simples para organização de registros odontológicos fictícios.">
+    <meta name="description" content="Demonstração simples e visual de um registro odontológico com dados fictícios.">
     <title>Clínica Dental | Registro odontológico</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="ambient ambient-one" aria-hidden="true"></div>
-    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <header class="instrument-bar">
+        <a class="brand" href="#" aria-label="Clínica Dental">
+            <span class="brand-symbol" aria-hidden="true">◐</span>
+            <span>
+                <strong>Clínica Dental</strong>
+                <small>registro odontológico</small>
+            </span>
+        </a>
 
-    <div class="app-shell">
-        <aside class="sidebar" aria-label="Navegação principal">
-            <div class="brand">
-                <div class="brand-mark" aria-hidden="true">
-                    <span class="brand-tooth"></span>
-                </div>
-                <div class="brand-copy">
-                    <strong>Clínica Dental</strong>
-                    <span>registro clínico</span>
-                </div>
-            </div>
+        <nav class="top-nav" aria-label="Navegação principal">
+            <button class="nav-item active" data-view="dashboard" type="button">Visão geral</button>
+            <button class="nav-item" data-view="pacientes" type="button">Pacientes</button>
+            <button class="nav-item" data-view="odontograma" type="button">Odontograma</button>
+        </nav>
 
-            <nav class="nav">
-                <button class="nav-item active" data-view="dashboard" type="button">
-                    <span class="nav-icon" aria-hidden="true">⌂</span>
-                    <span>Visão geral</span>
-                </button>
-                <button class="nav-item" data-view="pacientes" type="button">
-                    <span class="nav-icon" aria-hidden="true">◎</span>
-                    <span>Pacientes</span>
-                </button>
-                <button class="nav-item" data-view="odontograma" type="button">
-                    <span class="nav-icon" aria-hidden="true">◫</span>
-                    <span>Odontograma</span>
-                </button>
-            </nav>
+        <div class="bar-actions">
+            <span class="status-dot"><i></i> online</span>
+            <button id="alternar-tema" class="icon-control" type="button" aria-label="Alternar tema">◒</button>
+            <button id="novo-paciente-topo" class="primary-button" type="button">Novo registro</button>
+        </div>
+    </header>
 
-            <div class="sidebar-card">
-                <span class="sidebar-card-dot"></span>
-                <div>
-                    <strong>Demonstração pública</strong>
-                    <p>Somente dados fictícios.</p>
-                </div>
-            </div>
-        </aside>
+    <main class="workspace">
+        <section id="view-dashboard" class="view active" aria-labelledby="titulo-dashboard">
+            <div class="editorial-grid">
+                <section class="intro-panel">
+                    <p class="kicker">REGISTRO CLÍNICO ESSENCIAL</p>
+                    <h1 id="titulo-dashboard">Um sistema simples.<br><span>Com presença.</span></h1>
+                    <p class="intro-copy">
+                        Uma demonstração pública para organizar registros fictícios, acompanhar atividade e explorar um odontograma interativo sem excesso de módulos.
+                    </p>
 
-        <main class="main">
-            <header class="topbar">
-                <div>
-                    <p class="eyebrow">Registro odontológico</p>
-                    <h1 id="titulo-pagina">Visão geral</h1>
-                </div>
-
-                <div class="topbar-actions">
-                    <span class="status-dot"><i></i> Online</span>
-                    <button id="alternar-tema" class="icon-control theme-button" type="button" aria-label="Alternar tema">◐</button>
-                    <button id="novo-paciente-topo" class="primary-button" type="button">Novo registro</button>
-                </div>
-            </header>
-
-            <section id="view-dashboard" class="view active" aria-labelledby="titulo-pagina">
-                <section class="hero">
-                    <div class="hero-copy">
-                        <div class="hero-kicker">
-                            <span></span>
-                            Interface clínica essencial
-                        </div>
-                        <h2>Menos telas.<br><em>Mais clareza.</em></h2>
-                        <p>Uma demonstração simples para registrar pacientes fictícios, visualizar atividade e explorar um odontograma interativo.</p>
-
-                        <div class="hero-actions">
-                            <button class="hero-primary" data-view-target="pacientes" type="button">Abrir pacientes</button>
-                            <button class="hero-link" data-view-target="odontograma" type="button">Explorar odontograma <span>→</span></button>
-                        </div>
+                    <div class="intro-actions">
+                        <button class="primary-button large" data-view-target="pacientes" type="button">Abrir pacientes</button>
+                        <button class="quiet-button" data-view-target="odontograma" type="button">Ver odontograma</button>
                     </div>
 
-                    <div class="clinical-orbit" aria-hidden="true">
-                        <div class="orbit orbit-a"></div>
-                        <div class="orbit orbit-b"></div>
-                        <div class="orbit-core">
-                            <span class="hero-tooth"></span>
-                            <small>visão clínica</small>
-                        </div>
-                        <div class="orbit-chip chip-one">
+                    <div class="disclaimer-line">
+                        <span class="signal"></span>
+                        Ambiente demonstrativo · use apenas dados fictícios
+                    </div>
+                </section>
+
+                <section class="clinical-board" aria-label="Resumo clínico">
+                    <div class="board-heading">
+                        <span>Hoje</span>
+                        <strong>Visão clínica</strong>
+                    </div>
+
+                    <div class="metric-stack">
+                        <article>
                             <span>Pacientes</span>
-                            <strong id="hero-pacientes">0</strong>
-                        </div>
-                        <div class="orbit-chip chip-two">
-                            <span>Dentes</span>
-                            <strong>32</strong>
-                        </div>
-                        <div class="orbit-chip chip-three">
-                            <span>Status</span>
-                            <strong>Ativo</strong>
-                        </div>
+                            <strong id="stat-pacientes">0</strong>
+                            <small>registros ativos</small>
+                        </article>
+                        <article>
+                            <span>Atividade</span>
+                            <strong id="stat-recentes">0</strong>
+                            <small>registros recentes</small>
+                        </article>
+                        <article>
+                            <span>Procedimentos</span>
+                            <strong id="stat-procedimentos">0</strong>
+                            <small>tipos distintos</small>
+                        </article>
+                    </div>
+
+                    <div class="board-footer">
+                        <span class="board-label">Sistema</span>
+                        <span class="board-online"><i></i> Operacional</span>
                     </div>
                 </section>
+            </div>
 
-                <section class="signal-strip" aria-label="Indicadores">
-                    <article>
-                        <span>Pacientes</span>
-                        <strong id="stat-pacientes">0</strong>
-                        <small>registros ativos</small>
-                    </article>
-                    <article>
-                        <span>Recentes</span>
-                        <strong id="stat-recentes">0</strong>
-                        <small>últimas atividades</small>
-                    </article>
-                    <article>
-                        <span>Procedimentos</span>
-                        <strong id="stat-procedimentos">0</strong>
-                        <small>tipos registrados</small>
-                    </article>
-                    <article class="signal-status">
-                        <span>Sistema</span>
-                        <strong class="status-value">Online</strong>
-                        <small>demonstração disponível</small>
-                    </article>
-                </section>
+            <section class="flow-section">
+                <div class="flow-heading">
+                    <div>
+                        <p class="kicker">MOVIMENTO RECENTE</p>
+                        <h2>Últimos registros</h2>
+                    </div>
+                    <button class="quiet-button compact" data-view-target="pacientes" type="button">Ver todos</button>
+                </div>
 
-                <div class="dashboard-grid">
-                    <section class="panel activity-panel">
-                        <div class="panel-header">
-                            <div>
-                                <p class="eyebrow">Movimento recente</p>
-                                <h2>Atividade clínica</h2>
-                            </div>
-                            <button class="text-button" data-view-target="pacientes" type="button">Ver pacientes</button>
-                        </div>
-                        <div id="recentes" class="recent-list"></div>
-                    </section>
+                <div class="flow-grid">
+                    <div id="recentes" class="recent-list"></div>
 
-                    <section class="panel procedure-panel">
-                        <div class="panel-header">
-                            <div>
-                                <p class="eyebrow">Mapa rápido</p>
-                                <h2>Procedimentos</h2>
-                            </div>
+                    <aside class="procedure-aside">
+                        <div class="aside-head">
+                            <p class="kicker">PADRÃO</p>
+                            <h3>Procedimentos</h3>
                         </div>
                         <div id="procedimentos-resumo" class="procedure-summary"></div>
-                    </section>
+                    </aside>
                 </div>
             </section>
+        </section>
 
-            <section id="view-pacientes" class="view">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Registros fictícios</p>
-                        <h2>Pacientes</h2>
-                        <p>Uma lista simples para demonstrar cadastro, consulta, edição e exclusão.</p>
-                    </div>
-                    <button id="novo-paciente" class="primary-button" type="button">Novo registro</button>
+        <section id="view-pacientes" class="view">
+            <div class="page-title-row">
+                <div>
+                    <p class="kicker">REGISTROS FICTÍCIOS</p>
+                    <h1>Pacientes</h1>
+                    <p>Cadastro, consulta, edição e exclusão em uma interface enxuta.</p>
                 </div>
+                <button id="novo-paciente" class="primary-button" type="button">Novo registro</button>
+            </div>
 
-                <div class="patients-layout">
-                    <section class="panel patient-list-panel">
-                        <div class="search-row">
-                            <label class="search-box">
-                                <span class="sr-only">Buscar paciente</span>
-                                <span class="search-icon" aria-hidden="true">⌕</span>
-                                <input id="busca" type="search" placeholder="Buscar paciente ou procedimento">
-                            </label>
-                            <span id="contador-registros" class="count-pill">0 registros</span>
-                        </div>
-                        <div id="lista" class="patient-list"></div>
-                    </section>
-
-                    <section id="editor" class="panel editor-panel">
-                        <div class="editor-accent" aria-hidden="true"></div>
-                        <div class="panel-header">
-                            <div>
-                                <p class="eyebrow">Entrada rápida</p>
-                                <h2 id="titulo-formulario">Novo registro</h2>
-                            </div>
-                        </div>
-
-                        <form id="formulario-paciente">
-                            <div class="field">
-                                <label for="nome">Nome do paciente</label>
-                                <input id="nome" name="nome" type="text" maxlength="120" autocomplete="off" placeholder="Paciente Demonstração" required>
-                            </div>
-
-                            <div class="field">
-                                <label for="procedimento">Procedimento</label>
-                                <input id="procedimento" name="procedimento" type="text" maxlength="200" autocomplete="off" placeholder="Ex.: Profilaxia" required>
-                            </div>
-
-                            <div class="privacy-note">
-                                <span class="privacy-icon">i</span>
-                                <div>
-                                    <strong>Ambiente público</strong>
-                                    <p>Não informe dados reais de pacientes.</p>
-                                </div>
-                            </div>
-
-                            <div class="form-actions">
-                                <button id="botao-salvar" class="primary-button" type="submit">Salvar registro</button>
-                                <button id="botao-cancelar" class="secondary-button" type="button" hidden>Cancelar</button>
-                            </div>
-
-                            <p id="mensagem" class="message" role="status" aria-live="polite"></p>
-                        </form>
-                    </section>
-                </div>
-            </section>
-
-            <section id="view-odontograma" class="view">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Interação visual</p>
-                        <h2>Odontograma</h2>
-                        <p>Clique nos dentes para alternar entre hígido, planejado e realizado.</p>
+            <div class="patient-workspace">
+                <section class="patient-ledger">
+                    <div class="ledger-toolbar">
+                        <label class="search-box">
+                            <span class="sr-only">Buscar paciente</span>
+                            <span class="search-icon" aria-hidden="true">⌕</span>
+                            <input id="busca" type="search" placeholder="Buscar paciente ou procedimento">
+                        </label>
+                        <span id="contador-registros" class="count-pill">0 registros</span>
                     </div>
-                    <button id="resetar-odontograma" class="secondary-button" type="button">Resetar</button>
-                </div>
-
-                <section class="panel odontogram-panel">
-                    <div class="odontogram-top">
-                        <div class="legend">
-                            <span><i class="legend-dot healthy"></i> Hígido</span>
-                            <span><i class="legend-dot planned"></i> Planejado</span>
-                            <span><i class="legend-dot done"></i> Realizado</span>
-                        </div>
-
-                        <div class="odontogram-summary" aria-live="polite">
-                            <span><strong id="odonto-higidos">32</strong><small>hígidos</small></span>
-                            <span><strong id="odonto-planejados">0</strong><small>planejados</small></span>
-                            <span><strong id="odonto-realizados">0</strong><small>realizados</small></span>
-                        </div>
-                    </div>
-
-                    <div class="odontogram-stage">
-                        <div class="stage-glow" aria-hidden="true"></div>
-
-                        <div class="arch-block">
-                            <div class="arch-label">Arcada superior</div>
-                            <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
-                        </div>
-
-                        <div class="midline"><span>FDI</span></div>
-
-                        <div class="arch-block">
-                            <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
-                            <div class="arch-label">Arcada inferior</div>
-                        </div>
-                    </div>
-
-                    <div class="odontogram-note">
-                        <span class="note-mark">i</span>
-                        <p><strong>Demonstração visual.</strong> Não substitui prontuário clínico nem documentação profissional.</p>
-                    </div>
+                    <div id="lista" class="patient-list"></div>
                 </section>
+
+                <section id="editor" class="record-sheet">
+                    <div class="sheet-index">01</div>
+                    <div class="sheet-title">
+                        <p class="kicker">ENTRADA RÁPIDA</p>
+                        <h2 id="titulo-formulario">Novo registro</h2>
+                    </div>
+
+                    <form id="formulario-paciente">
+                        <div class="field">
+                            <label for="nome">Nome do paciente</label>
+                            <input id="nome" name="nome" type="text" maxlength="120" autocomplete="off" placeholder="Paciente Demonstração" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="procedimento">Procedimento</label>
+                            <input id="procedimento" name="procedimento" type="text" maxlength="200" autocomplete="off" placeholder="Ex.: Profilaxia" required>
+                        </div>
+
+                        <div class="privacy-note">
+                            <strong>Privacidade</strong>
+                            <span>Este projeto é público. Não use dados reais de pacientes.</span>
+                        </div>
+
+                        <div class="form-actions">
+                            <button id="botao-salvar" class="primary-button" type="submit">Salvar registro</button>
+                            <button id="botao-cancelar" class="quiet-button" type="button" hidden>Cancelar</button>
+                        </div>
+
+                        <p id="mensagem" class="message" role="status" aria-live="polite"></p>
+                    </form>
+                </section>
+            </div>
+        </section>
+
+        <section id="view-odontograma" class="view">
+            <div class="page-title-row">
+                <div>
+                    <p class="kicker">MAPA DENTÁRIO</p>
+                    <h1>Odontograma</h1>
+                    <p>Clique em um dente para alternar o estado clínico demonstrativo.</p>
+                </div>
+                <button id="resetar-odontograma" class="quiet-button" type="button">Resetar</button>
+            </div>
+
+            <section class="odontogram-canvas">
+                <div class="canvas-top">
+                    <div class="legend">
+                        <span><i class="legend-dot healthy"></i> Hígido</span>
+                        <span><i class="legend-dot planned"></i> Planejado</span>
+                        <span><i class="legend-dot done"></i> Realizado</span>
+                    </div>
+
+                    <div class="odontogram-summary" aria-live="polite">
+                        <span><strong id="odonto-higidos">32</strong><small>hígidos</small></span>
+                        <span><strong id="odonto-planejados">0</strong><small>planejados</small></span>
+                        <span><strong id="odonto-realizados">0</strong><small>realizados</small></span>
+                    </div>
+                </div>
+
+                <div class="dental-field">
+                    <div class="arch-block">
+                        <div class="arch-label">Superior</div>
+                        <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                    </div>
+
+                    <div class="midline"><span>FDI</span></div>
+
+                    <div class="arch-block">
+                        <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
+                        <div class="arch-label">Inferior</div>
+                    </div>
+                </div>
+
+                <div class="canvas-note">
+                    <span>i</span>
+                    <p><strong>Demonstração visual.</strong> Não substitui prontuário clínico nem documentação profissional.</p>
+                </div>
             </section>
-        </main>
-    </div>
+        </section>
+    </main>
 
     <dialog id="detalhes-paciente" class="details-dialog">
         <div class="dialog-header">
             <div>
-                <p class="eyebrow">Ficha demonstrativa</p>
+                <p class="kicker">FICHA DEMONSTRATIVA</p>
                 <h2 id="detalhe-nome">Paciente</h2>
             </div>
             <button id="fechar-detalhes" class="icon-control" type="button" aria-label="Fechar">×</button>
         </div>
 
-        <div class="detail-hero">
-            <span class="detail-avatar" id="detalhe-avatar" aria-hidden="true">P</span>
-            <div>
-                <span>Último procedimento</span>
-                <strong id="detalhe-procedimento"></strong>
-            </div>
+        <div class="detail-rule"></div>
+
+        <div class="detail-row">
+            <span>Procedimento</span>
+            <strong id="detalhe-procedimento"></strong>
         </div>
 
-        <div class="detail-line">
+        <div class="detail-row">
             <span>Registro criado</span>
             <strong id="detalhe-data"></strong>
         </div>
 
-        <div class="timeline">
-            <div class="timeline-dot"></div>
-            <div>
-                <strong>Registro disponível</strong>
-                <p>Evento demonstrativo da linha do tempo.</p>
-            </div>
+        <div class="detail-foot">
+            <span class="signal"></span>
+            Registro demonstrativo disponível
         </div>
     </dialog>
 
