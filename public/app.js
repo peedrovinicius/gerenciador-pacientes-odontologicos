@@ -13,6 +13,8 @@ const detalhesPaciente = document.getElementById('detalhes-paciente');
 const detalheNome = document.getElementById('detalhe-nome');
 const detalheProcedimento = document.getElementById('detalhe-procedimento');
 const detalheData = document.getElementById('detalhe-data');
+const detalheAvatar = document.getElementById('detalhe-avatar');
+const heroPacientes = document.getElementById('hero-pacientes');
 
 const STORAGE_PACIENTES = 'clinica-dental-demo-pacientes';
 const STORAGE_ODONTOGRAMA = 'clinica-dental-demo-odontograma';
@@ -102,7 +104,7 @@ function mostrarView(nome) {
     });
 
     const titulos = {
-        dashboard: 'Dashboard',
+        dashboard: 'Visão geral',
         pacientes: 'Pacientes',
         odontograma: 'Odontograma',
     };
@@ -122,6 +124,7 @@ function abrirDetalhes(paciente) {
     detalheNome.textContent = paciente.nome;
     detalheProcedimento.textContent = paciente.procedimento;
     detalheData.textContent = formatarData(paciente.criadoEm);
+    detalheAvatar.textContent = iniciais(paciente.nome);
     detalhesPaciente.showModal();
 }
 
@@ -190,6 +193,7 @@ function renderizarPacientes(pacientes) {
 
 function renderizarDashboard(pacientes) {
     document.getElementById('stat-pacientes').textContent = pacientes.length;
+    if (heroPacientes) heroPacientes.textContent = pacientes.length;
     document.getElementById('stat-recentes').textContent = Math.min(pacientes.length, 5);
 
     const procedimentos = new Map();
