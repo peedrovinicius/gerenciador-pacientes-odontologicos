@@ -13,9 +13,31 @@ const detalheNome = document.getElementById('detalhe-nome');
 const detalheProcedimento = document.getElementById('detalhe-procedimento');
 const detalheData = document.getElementById('detalhe-data');
 
-const STORAGE_PACIENTES = 'clinica-dental-demo-pacientes';
-const STORAGE_ODONTOGRAMA = 'clinica-dental-demo-odontograma';
-const STORAGE_TEMA = 'clinica-dental-demo-tema';
+const STORAGE_PACIENTES = 'gerenciador-odontologico-pacientes';
+const STORAGE_ODONTOGRAMA = 'gerenciador-odontologico-odontograma';
+const STORAGE_TEMA = 'gerenciador-odontologico-tema';
+
+const STORAGE_LEGADO = {
+    'clinica-dental-demo-pacientes': STORAGE_PACIENTES,
+    'clinica-dental-demo-odontograma': STORAGE_ODONTOGRAMA,
+    'clinica-dental-demo-tema': STORAGE_TEMA,
+};
+
+function migrarStorageLegado() {
+    try {
+        Object.entries(STORAGE_LEGADO).forEach(([chaveAntiga, chaveAtual]) => {
+            const valorAntigo = localStorage.getItem(chaveAntiga);
+
+            if (valorAntigo !== null && localStorage.getItem(chaveAtual) === null) {
+                localStorage.setItem(chaveAtual, valorAntigo);
+            }
+
+            localStorage.removeItem(chaveAntiga);
+        });
+    } catch {
+        // A demonstração continua utilizável mesmo quando o armazenamento local está indisponível.
+    }
+}
 
 const DEMO_PACIENTES = [
     {
@@ -57,6 +79,8 @@ const {
     carregarOdontograma: carregarOdontogramaModel,
     salvarOdontograma: salvarOdontogramaModel,
 } = window.OdontogramModel;
+
+migrarStorageLegado();
 
 let pacienteEmEdicao = null;
 let pacientesCache = [];
