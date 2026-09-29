@@ -83,12 +83,12 @@ test('remove armazenamento inválido e volta aos exemplos iniciais', () => {
     assert.deepEqual(restaurado[16], { status: 'planned', condicao: 'carie' });
 });
 
-test('incisivos inferiores centrais recebem classe anatômica estreita', () => {
+test('incisivos inferiores recebem classe anatômica estreita', () => {
     for (const numero of [31, 32, 41, 42]) {
-        assert.match(classeAnatomicaDente(numero), /incisivo-inferior-central/);
+        assert.match(classeAnatomicaDente(numero), /incisivo-inferior-estreito/);
     }
 
-    assert.doesNotMatch(classeAnatomicaDente(11), /incisivo-inferior-central/);
+    assert.doesNotMatch(classeAnatomicaDente(11), /incisivo-inferior-estreito/);
 });
 
 test('nome anatômico usa numeração FDI corretamente', () => {
