@@ -56,7 +56,9 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 ### Interface
 
-- layout responsivo;
+- identidade visual própria em azul-marinho, azul vivo, branco e cinza-claro;
+- cabeçalho com a marca **Gerenciador — Pacientes Odontológicos**;
+- layout editorial e responsivo;
 - tema claro e escuro;
 - dados fictícios iniciais para demonstração;
 - navegação entre as três áreas sem recarregar a página.
