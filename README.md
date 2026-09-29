@@ -4,7 +4,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
-Aplicação web deliberadamente simples para demonstrar organização de registros odontológicos fictícios, integração frontend/backend e uma interface clínica enxuta.
+Aplicação web simples para organizar registros odontológicos fictícios, demonstrar integração entre frontend e backend e apresentar um odontograma interativo.
 
 **Demo principal:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/
 
@@ -30,7 +30,7 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 ![Odontograma interativo do Gerenciador](docs/screenshots/odontograma.png)
 
-As capturas são geradas automaticamente a partir da própria interface pelo GitHub Actions quando arquivos do frontend são alterados.
+As capturas são atualizadas por um workflow do GitHub Actions quando a interface é modificada.
 
 ## Funcionalidades
 
