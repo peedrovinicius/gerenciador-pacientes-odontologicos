@@ -3,42 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema web para cadastro, consulta, edição e exclusão de registros odontológicos.">
-    <title>Gerenciador de Pacientes Odontológicos</title>
+    <meta name="description" content="Demonstração de um sistema web para organização de pacientes e registros odontológicos fictícios.">
+    <title>Clínica Dental | Gestão odontológica</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <main>
-        <header class="cabecalho">
-            <h1>Gerenciador de Pacientes Odontológicos</h1>
-            <p class="subtitulo">Cadastro, consulta, edição e exclusão de procedimentos registrados.</p>
-            <p class="aviso"><strong>Demonstração técnica:</strong> use apenas dados fictícios. Não insira informações reais de pacientes.</p>
-        </header>
-
-        <section class="cartao" aria-labelledby="titulo-formulario">
-            <h2 id="titulo-formulario">Novo registro</h2>
-            <form id="formulario-paciente">
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Navegação principal">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">D</div>
                 <div>
-                    <label for="nome">Nome do paciente</label>
-                    <input id="nome" name="nome" type="text" maxlength="120" required>
+                    <strong>Clínica Dental</strong>
+                    <span>Gestão odontológica</span>
                 </div>
-                <div>
-                    <label for="procedimento">Procedimento realizado</label>
-                    <input id="procedimento" name="procedimento" type="text" maxlength="200" required>
-                </div>
-                <div class="acoes-formulario">
-                    <button id="botao-salvar" type="submit">Salvar registro</button>
-                    <button id="botao-cancelar" class="botao-cancelar" type="button" hidden>Cancelar edição</button>
-                </div>
-                <p id="mensagem" role="status" aria-live="polite"></p>
-            </form>
-        </section>
+            </div>
 
-        <section class="cartao" aria-labelledby="titulo-registros">
-            <h2 id="titulo-registros">Registros</h2>
-            <ul id="lista" class="lista"></ul>
-        </section>
-    </main>
+            <nav class="nav">
+                <button class="nav-item active" data-view="dashboard" type="button">
+                    <span aria-hidden="true">⌂</span> Dashboard
+                </button>
+                <button class="nav-item" data-view="pacientes" type="button">
+                    <span aria-hidden="true">◎</span> Pacientes
+                </button>
+                <button class="nav-item" data-view="agenda" type="button">
+                    <span aria-hidden="true">□</span> Agenda
+                </button>
+                <button class="nav-item" data-view="tratamentos" type="button">
+                    <span aria-hidden="true">◇</span> Tratamentos
+                </button>
+                <button class="nav-item" data-view="odontograma" type="button">
+                    <span aria-hidden="true">◫</span> Odontograma
+                </button>
+                <button class="nav-item" data-view="relatorios" type="button">
+                    <span aria-hidden="true">▥</span> Relatórios
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="demo-badge">Ambiente demonstrativo</div>
+                <p>Use somente dados fictícios.</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Visão geral</p>
+                    <h1 id="titulo-pagina">Dashboard</h1>
+                </div>
+                <div class="topbar-actions">
+                    <span class="status-dot"><i></i> Sistema online</span>
+                    <button id="novo-paciente-topo" class="primary-button" type="button">+ Novo registro</button>
+                </div>
+            </header>
+
+            <section id="view-dashboard" class="view active" aria-labelledby="titulo-pagina">
+                <div class="welcome">
+                    <div>
+                        <p class="eyebrow">Painel clínico</p>
+                        <h2>Gestão simples e organizada do atendimento odontológico</h2>
+                        <p>Acompanhe seus registros demonstrativos, atividade recente e visão geral da operação em um só lugar.</p>
+                    </div>
+                    <div class="welcome-chip">Demonstração técnica</div>
+                </div>
+
+                <div class="stats-grid" aria-label="Indicadores">
+                    <article class="stat-card">
+                        <span class="stat-label">Pacientes cadastrados</span>
+                        <strong id="stat-pacientes">0</strong>
+                        <small>registros no sistema</small>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Registros recentes</span>
+                        <strong id="stat-recentes">0</strong>
+                        <small>atividade cadastrada</small>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Procedimentos</span>
+                        <strong id="stat-procedimentos">0</strong>
+                        <small>tipos registrados</small>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Status</span>
+                        <strong class="status-value">Ativo</strong>
+                        <small>API disponível</small>
+                    </article>
+                </div>
+
+                <div class="dashboard-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Atividade</p>
+                                <h2>Registros recentes</h2>
+                            </div>
+                            <button class="text-button" data-view-target="pacientes" type="button">Ver todos</button>
+                        </div>
+                        <div id="recentes" class="recent-list"></div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Distribuição</p>
+                                <h2>Procedimentos cadastrados</h2>
+                            </div>
+                        </div>
+                        <div id="procedimentos-resumo" class="procedure-summary"></div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="view-pacientes" class="view">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Cadastro clínico</p>
+                        <h2>Pacientes e registros</h2>
+                        <p>Consulte, edite e organize os registros demonstrativos já cadastrados.</p>
+                    </div>
+                    <button id="novo-paciente" class="primary-button" type="button">+ Novo registro</button>
+                </div>
+
+                <div class="patients-layout">
+                    <section class="panel patient-list-panel">
+                        <div class="search-row">
+                            <label class="search-box">
+                                <span class="sr-only">Buscar paciente</span>
+                                <input id="busca" type="search" placeholder="Buscar por paciente ou procedimento">
+                            </label>
+                            <span id="contador-registros" class="count-pill">0 registros</span>
+                        </div>
+                        <div id="lista" class="patient-list"></div>
+                    </section>
+
+                    <section id="editor" class="panel editor-panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Registro</p>
+                                <h2 id="titulo-formulario">Novo registro</h2>
+                            </div>
+                        </div>
+                        <form id="formulario-paciente">
+                            <div class="field">
+                                <label for="nome">Nome do paciente</label>
+                                <input id="nome" name="nome" type="text" maxlength="120" autocomplete="off" placeholder="Ex.: Paciente Demonstração" required>
+                            </div>
+                            <div class="field">
+                                <label for="procedimento">Procedimento</label>
+                                <input id="procedimento" name="procedimento" type="text" maxlength="200" autocomplete="off" placeholder="Ex.: Profilaxia" required>
+                            </div>
+                            <div class="privacy-note">
+                                <strong>Privacidade:</strong> este projeto é uma demonstração pública. Não informe dados reais de pacientes.
+                            </div>
+                            <div class="form-actions">
+                                <button id="botao-salvar" class="primary-button" type="submit">Salvar registro</button>
+                                <button id="botao-cancelar" class="secondary-button" type="button" hidden>Cancelar edição</button>
+                            </div>
+                            <p id="mensagem" class="message" role="status" aria-live="polite"></p>
+                        </form>
+                    </section>
+                </div>
+            </section>
+
+            <section id="view-agenda" class="view placeholder-view">
+                <div class="empty-module">
+                    <span>□</span>
+                    <h2>Agenda</h2>
+                    <p>Módulo preparado para a próxima evolução do projeto: consultas, horários e status de atendimento.</p>
+                </div>
+            </section>
+
+            <section id="view-tratamentos" class="view placeholder-view">
+                <div class="empty-module">
+                    <span>◇</span>
+                    <h2>Tratamentos</h2>
+                    <p>Área reservada para planos de tratamento, etapas clínicas e acompanhamento de evolução.</p>
+                </div>
+            </section>
+
+            <section id="view-odontograma" class="view placeholder-view">
+                <div class="empty-module">
+                    <span>◫</span>
+                    <h2>Odontograma</h2>
+                    <p>Próxima fase: odontograma interativo com condições atuais, procedimentos planejados e realizados.</p>
+                </div>
+            </section>
+
+            <section id="view-relatorios" class="view placeholder-view">
+                <div class="empty-module">
+                    <span>▥</span>
+                    <h2>Relatórios</h2>
+                    <p>Estrutura pronta para indicadores de atendimento e exportações demonstrativas.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <dialog id="detalhes-paciente" class="details-dialog">
+        <div class="dialog-header">
+            <div>
+                <p class="eyebrow">Ficha do paciente</p>
+                <h2 id="detalhe-nome">Paciente</h2>
+            </div>
+            <button id="fechar-detalhes" class="icon-button" type="button" aria-label="Fechar">×</button>
+        </div>
+        <div class="detail-card">
+            <span>Procedimento registrado</span>
+            <strong id="detalhe-procedimento"></strong>
+        </div>
+        <div class="detail-card">
+            <span>Data de criação</span>
+            <strong id="detalhe-data"></strong>
+        </div>
+        <div class="timeline">
+            <div class="timeline-dot"></div>
+            <div>
+                <strong>Registro criado</strong>
+                <p>Primeiro evento disponível na linha do tempo desta demonstração.</p>
+            </div>
+        </div>
+    </dialog>
 
     <script src="/app.js"></script>
 </body>
