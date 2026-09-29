@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentação do projeto
-    url: https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos#sobre-o-projeto
-    about: Consulte arquitetura, API, segurança e limitações antes de abrir uma issue.
+    url: https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos#escopo
+    about: Consulte o escopo, a API, a segurança e as limitações antes de abrir uma issue.
