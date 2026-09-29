@@ -94,7 +94,7 @@
         const classes = [tipoDente(numero)];
 
         if ([31, 32, 41, 42].includes(numero)) {
-            classes.push('incisivo-inferior-central');
+            classes.push('incisivo-inferior-estreito');
         } else if ([33, 43].includes(numero)) {
             classes.push('canino-inferior');
         }
