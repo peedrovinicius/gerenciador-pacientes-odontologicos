@@ -6,6 +6,16 @@ const { validatePaciente } = require('./validation');
 
 const app = express();
 
+function responderErro(res, status, codigo, mensagem, campos = []) {
+    const corpo = { codigo, mensagem };
+
+    if (campos.length) {
+        corpo.campos = campos;
+    }
+
+    return res.status(status).json(corpo);
+}
+
 app.disable('x-powered-by');
 
 app.use((_req, res, next) => {
@@ -28,7 +38,7 @@ app.use('/api', (_req, res, next) => {
 
 app.use('/api/pacientes', (req, res, next) => {
     if (['POST', 'PUT'].includes(req.method) && !req.is('application/json')) {
-        return res.status(415).json({ erro: 'Content-Type deve ser application/json.' });
+        return responderErro(res, 415, 'CONTENT_TYPE_INVALIDO', 'Content-Type deve ser application/json.');
     }
     return next();
 });
@@ -46,15 +56,18 @@ app.get('/api/pacientes', (_req, res) => {
 
 app.post('/api/pacientes', (req, res) => {
     if (pacientes.length >= MAX_REGISTROS_DEMO) {
-        return res.status(409).json({
-            erro: `Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`,
-        });
+        return responderErro(
+            res,
+            409,
+            'LIMITE_DEMO_ATINGIDO',
+            `Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`,
+        );
     }
 
     const validation = validatePaciente(req.body);
 
     if (!validation.valid) {
-        return res.status(400).json({ erro: validation.error });
+        return responderErro(res, 400, 'DADOS_INVALIDOS', validation.error, validation.fields);
     }
 
     const paciente = {
@@ -72,13 +85,13 @@ app.put('/api/pacientes/:id', (req, res) => {
     const indice = pacientes.findIndex((paciente) => paciente.id === req.params.id);
 
     if (indice === -1) {
-        return res.status(404).json({ erro: 'Paciente não encontrado.' });
+        return responderErro(res, 404, 'PACIENTE_NAO_ENCONTRADO', 'Paciente não encontrado.');
     }
 
     const validation = validatePaciente(req.body);
 
     if (!validation.valid) {
-        return res.status(400).json({ erro: validation.error });
+        return responderErro(res, 400, 'DADOS_INVALIDOS', validation.error, validation.fields);
     }
 
     pacientes[indice] = {
@@ -92,25 +105,28 @@ app.put('/api/pacientes/:id', (req, res) => {
 
 app.delete('/api/pacientes/:id', (_req, res) => {
     res.setHeader('Allow', 'GET, POST, PUT');
-    return res.status(405).json({
-        erro: 'Exclusão desativada nesta demonstração.',
-    });
+    return responderErro(
+        res,
+        405,
+        'EXCLUSAO_DESATIVADA',
+        'Exclusão desativada nesta demonstração.',
+    );
 });
 
 app.use((error, _req, res, next) => {
     if (error?.type === 'entity.parse.failed') {
-        return res.status(400).json({ erro: 'JSON inválido.' });
+        return responderErro(res, 400, 'JSON_INVALIDO', 'JSON inválido.');
     }
 
     if (error?.type === 'entity.too.large') {
-        return res.status(413).json({ erro: 'Payload excede o limite de 10kb.' });
+        return responderErro(res, 413, 'PAYLOAD_EXCEDIDO', 'Payload excede o limite de 10kb.');
     }
 
     return next(error);
 });
 
 app.use((_req, res) => {
-    res.status(404).json({ erro: 'Recurso não encontrado.' });
+    responderErro(res, 404, 'RECURSO_NAO_ENCONTRADO', 'Recurso não encontrado.');
 });
 
 module.exports = { app };
