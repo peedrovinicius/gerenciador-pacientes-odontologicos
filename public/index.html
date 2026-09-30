@@ -10,25 +10,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
     <header class="instrument-bar">
         <a class="brand brand-logo-link" href="#" aria-label="Gerenciador de Pacientes Odontológicos">
             <img class="brand-logo-image" src="gerenciador-logo-marrom.svg" alt="Gerenciador — Pacientes Odontológicos">
         </a>
 
         <nav class="top-nav" aria-label="Navegação principal">
-            <button class="nav-item active" data-view="dashboard" type="button" aria-current="page">Visão geral</button>
-            <button class="nav-item" data-view="pacientes" type="button">Pacientes</button>
-            <button class="nav-item" data-view="odontograma" type="button">Odontograma</button>
+            <button class="nav-item active" data-view="dashboard" type="button" aria-current="page" aria-controls="view-dashboard">Visão geral</button>
+            <button class="nav-item" data-view="pacientes" type="button" aria-controls="view-pacientes">Pacientes</button>
+            <button class="nav-item" data-view="odontograma" type="button" aria-controls="view-odontograma">Odontograma</button>
         </nav>
 
         <div class="bar-actions">
-            <span class="status-dot"><i></i> online</span>
+            <span class="status-dot"><i aria-hidden="true"></i> online</span>
             <button id="alternar-tema" class="icon-control" type="button" aria-label="Ativar tema escuro" aria-pressed="false">◒</button>
             <button id="novo-paciente-topo" class="primary-button" type="button">Novo registro</button>
         </div>
     </header>
 
-    <main class="workspace">
+    <main id="conteudo-principal" class="workspace">
         <section id="view-dashboard" class="view active" aria-labelledby="titulo-dashboard">
             <div class="editorial-grid">
                 <section class="intro-panel">
@@ -44,7 +45,7 @@
                     </div>
 
                     <div class="disclaimer-line">
-                        <span class="signal"></span>
+                        <span class="signal" aria-hidden="true"></span>
                         Ambiente demonstrativo · use apenas dados fictícios
                     </div>
                 </section>
@@ -173,9 +174,9 @@
             <section class="odontogram-canvas">
                 <div class="canvas-top">
                     <div class="legend">
-                        <span><i class="legend-dot healthy"></i> Hígido</span>
-                        <span><i class="legend-dot planned"></i> Planejado</span>
-                        <span><i class="legend-dot done"></i> Realizado</span>
+                        <span><i class="legend-dot healthy" aria-hidden="true"></i> Hígido</span>
+                        <span><i class="legend-dot planned" aria-hidden="true"></i> Planejado</span>
+                        <span><i class="legend-dot done" aria-hidden="true"></i> Realizado</span>
                     </div>
 
                     <div class="odontogram-summary" aria-live="polite">
@@ -189,13 +190,13 @@
                     <div class="dental-field">
                         <div class="arch-block">
                             <div class="arch-label">Arcada superior · Maxila</div>
-                            <div id="arcada-superior" class="teeth-row" aria-label="Arcada superior"></div>
+                            <div id="arcada-superior" class="teeth-row" role="group" aria-label="Arcada superior"></div>
                         </div>
 
                         <div class="midline"><span>FDI</span></div>
 
                         <div class="arch-block">
-                            <div id="arcada-inferior" class="teeth-row" aria-label="Arcada inferior"></div>
+                            <div id="arcada-inferior" class="teeth-row" role="group" aria-label="Arcada inferior"></div>
                             <div class="arch-label">Arcada inferior · Mandíbula</div>
                         </div>
                     </div>
@@ -227,17 +228,17 @@
                                 <small>aplicados ao dente selecionado</small>
                             </div>
                             <div class="quick-example-grid">
-                                <button type="button" data-odontograma-condicao="carie"><i class="condition-mark carie"></i>Cárie</button>
-                                <button type="button" data-odontograma-condicao="restauracao"><i class="condition-mark restauracao"></i>Restauração</button>
-                                <button type="button" data-odontograma-condicao="canal"><i class="condition-mark canal"></i>Canal</button>
-                                <button type="button" data-odontograma-condicao="profilaxia"><i class="condition-mark profilaxia"></i>Profilaxia</button>
+                                <button type="button" data-odontograma-condicao="carie"><i class="condition-mark carie" aria-hidden="true"></i>Cárie</button>
+                                <button type="button" data-odontograma-condicao="restauracao"><i class="condition-mark restauracao" aria-hidden="true"></i>Restauração</button>
+                                <button type="button" data-odontograma-condicao="canal"><i class="condition-mark canal" aria-hidden="true"></i>Canal</button>
+                                <button type="button" data-odontograma-condicao="profilaxia"><i class="condition-mark profilaxia" aria-hidden="true"></i>Profilaxia</button>
                             </div>
                         </div>
                     </aside>
                 </div>
 
                 <div class="canvas-note">
-                    <span>i</span>
+                    <span aria-hidden="true">i</span>
                     <p><strong>Demonstração visual.</strong> Os exemplos são fictícios e não substituem prontuário clínico nem documentação profissional.</p>
                 </div>
             </section>
@@ -266,7 +267,7 @@
         </div>
 
         <div class="detail-foot">
-            <span class="signal"></span>
+            <span class="signal" aria-hidden="true"></span>
             Registro demonstrativo disponível
         </div>
     </dialog>
