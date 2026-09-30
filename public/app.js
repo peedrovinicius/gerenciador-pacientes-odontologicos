@@ -13,36 +13,10 @@ const detalheNome = document.getElementById('detalhe-nome');
 const detalheProcedimento = document.getElementById('detalhe-procedimento');
 const detalheData = document.getElementById('detalhe-data');
 
-const STORAGE_PACIENTES = 'gerenciador-odontologico-pacientes';
 const STORAGE_ODONTOGRAMA = 'gerenciador-odontologico-odontograma';
 const STORAGE_TEMA = 'gerenciador-odontologico-tema';
 
-const DEMO_PACIENTES = [
-    {
-        id: 'demo-ana-martins',
-        nome: 'Ana Martins',
-        procedimento: 'Profilaxia e orientação de higiene',
-        criadoEm: '2026-09-29T12:30:00.000Z',
-    },
-    {
-        id: 'demo-carlos-almeida',
-        nome: 'Carlos Almeida',
-        procedimento: 'Restauração em resina composta',
-        criadoEm: '2026-09-28T16:10:00.000Z',
-    },
-    {
-        id: 'demo-julia-rocha',
-        nome: 'Júlia Rocha',
-        procedimento: 'Avaliação odontológica',
-        criadoEm: '2026-09-27T14:45:00.000Z',
-    },
-    {
-        id: 'demo-lucas-monteiro',
-        nome: 'Lucas Monteiro',
-        procedimento: 'Aplicação tópica de flúor',
-        criadoEm: '2026-09-26T18:20:00.000Z',
-    },
-];
+const { DEMO_PACIENTES, cloneDemo } = window.DemoPatients;
 
 const {
     DENTES_SUPERIORES,
@@ -64,9 +38,6 @@ let modoLocal = false;
 let odontograma = carregarOdontograma();
 let denteSelecionado = 16;
 
-function cloneDemo() {
-    return DEMO_PACIENTES.map((paciente) => ({ ...paciente }));
-}
 
 function iniciais(nome) {
     return String(nome || '?')
@@ -170,13 +141,7 @@ function criarRegistro(paciente) {
     botaoEditar.textContent = 'Editar';
     botaoEditar.addEventListener('click', () => iniciarEdicao(paciente));
 
-    const botaoExcluir = document.createElement('button');
-    botaoExcluir.type = 'button';
-    botaoExcluir.className = 'delete-button';
-    botaoExcluir.textContent = 'Excluir';
-    botaoExcluir.addEventListener('click', () => excluirPaciente(paciente.id, botaoExcluir));
-
-    acoes.append(botaoVer, botaoEditar, botaoExcluir);
+    acoes.append(botaoVer, botaoEditar);
     item.append(principal, acoes);
     return item;
 }
@@ -328,23 +293,7 @@ function cancelarEdicao() {
 }
 
 function carregarPacientesLocais() {
-    try {
-        const salvos = JSON.parse(localStorage.getItem(STORAGE_PACIENTES) || 'null');
-
-        if (Array.isArray(salvos)) {
-            return salvos;
-        }
-    } catch {
-        localStorage.removeItem(STORAGE_PACIENTES);
-    }
-
-    const iniciaisDemo = cloneDemo();
-    localStorage.setItem(STORAGE_PACIENTES, JSON.stringify(iniciaisDemo));
-    return iniciaisDemo;
-}
-
-function salvarPacientesLocais(pacientes) {
-    localStorage.setItem(STORAGE_PACIENTES, JSON.stringify(pacientes));
+    return cloneDemo();
 }
 
 async function carregarPacientes() {
@@ -368,54 +317,24 @@ async function carregarPacientes() {
     renderizarDashboard(pacientesCache);
 }
 
-async function excluirPaciente(id, botao) {
-    if (!window.confirm('Excluir este registro demonstrativo?')) return;
-
-    botao.disabled = true;
-    mensagem.textContent = '';
-
-    try {
-        if (modoLocal) {
-            pacientesCache = pacientesCache.filter((paciente) => paciente.id !== id);
-            salvarPacientesLocais(pacientesCache);
-        } else {
-            const resposta = await fetch(`/api/pacientes/${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-            });
-
-            if (!resposta.ok) {
-                const resultado = await resposta.json();
-                throw new Error(resultado.erro || 'Não foi possível excluir o registro.');
-            }
-        }
-
-        if (pacienteEmEdicao === id) cancelarEdicao();
-        mensagem.textContent = 'Registro excluído com sucesso.';
-        await carregarPacientes();
-    } catch (erro) {
-        mensagem.textContent = erro.message;
-        botao.disabled = false;
-    }
-}
-
 function salvarRegistroLocal(dados, editando) {
     if (editando) {
         pacientesCache = pacientesCache.map((paciente) =>
             paciente.id === pacienteEmEdicao
-                ? { ...paciente, ...dados }
+                ? { ...paciente, ...dados, temporario: true }
                 : paciente);
-    } else {
-        pacientesCache = [
-            ...pacientesCache,
-            {
-                id: `local-${Date.now()}`,
-                ...dados,
-                criadoEm: new Date().toISOString(),
-            },
-        ];
+        return;
     }
 
-    salvarPacientesLocais(pacientesCache);
+    pacientesCache = [
+        ...pacientesCache,
+        {
+            id: `local-${Date.now()}`,
+            ...dados,
+            criadoEm: new Date().toISOString(),
+            temporario: true,
+        },
+    ];
 }
 
 formulario.addEventListener('submit', async (evento) => {
@@ -448,11 +367,19 @@ formulario.addEventListener('submit', async (evento) => {
         }
 
         cancelarEdicao();
-        mensagem.textContent = editando
-            ? 'Registro atualizado com sucesso.'
-            : 'Registro salvo com sucesso.';
 
-        await carregarPacientes();
+        if (modoLocal) {
+            mensagem.textContent = editando
+                ? 'Alteração temporária. Ao recarregar a página, o registro original será restaurado.'
+                : 'Registro temporário. Ao recarregar a página, ele será removido.';
+            aplicarBusca();
+            renderizarDashboard(pacientesCache);
+        } else {
+            mensagem.textContent = editando
+                ? 'Registro atualizado temporariamente na memória do servidor.'
+                : 'Registro criado temporariamente na memória do servidor.';
+            await carregarPacientes();
+        }
     } catch (erro) {
         mensagem.textContent = erro.message;
     } finally {
