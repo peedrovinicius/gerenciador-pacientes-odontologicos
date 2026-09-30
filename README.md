@@ -45,12 +45,14 @@ As capturas são atualizadas por um workflow do GitHub Actions quando a interfac
 
 ### Pacientes
 
-- cadastro de nome do paciente e procedimento;
+- base fixa com 12 pacientes fictícios;
+- cadastro temporário de nome do paciente e procedimento;
 - listagem dos registros;
 - busca por paciente ou procedimento;
 - visualização de ficha demonstrativa;
-- edição de registro existente;
-- exclusão com confirmação;
+- edição temporária de registro existente;
+- indicação visual para registros temporários;
+- exclusão desativada;
 - mensagens de sucesso e erro.
 
 ### Odontograma
@@ -80,7 +82,8 @@ As capturas são atualizadas por um workflow do GitHub Actions quando a interfac
 - favicon próprio baseado na identidade visual;
 - layout editorial e responsivo;
 - tema claro e escuro;
-- dados fictícios iniciais para demonstração;
+- 12 pacientes fictícios iniciais para demonstração;
+- cadastros e edições de pacientes temporários;
 - navegação entre as três áreas sem recarregar a página.
 
 ## Como a demonstração funciona
@@ -94,15 +97,22 @@ Quando executada junto ao backend, o frontend usa:
 - `GET /api/pacientes`
 - `POST /api/pacientes`
 - `PUT /api/pacientes/:id`
-- `DELETE /api/pacientes/:id`
 
-Os registros ficam em memória durante a execução do servidor.
+A base inicial contém 12 pacientes fictícios. Novos registros e edições ficam somente na memória do processo e desaparecem quando o servidor é reiniciado.
+
+A exclusão é intencionalmente desativada. Requisições `DELETE /api/pacientes/:id` retornam `405 Method Not Allowed` e não removem registros.
 
 ### Como demonstração estática
 
-No GitHub Pages não existe backend Node.js. Quando a API não está disponível, a interface utiliza `localStorage` para manter a demonstração funcional no próprio navegador.
+No GitHub Pages não existe backend Node.js. A interface inicia sempre com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições apenas na memória da página.
 
-Esse fallback é usado apenas para fins de portfólio e não representa persistência clínica real.
+Ao recarregar ou reabrir a demonstração:
+
+- pacientes adicionados durante a sessão desaparecem;
+- edições são desfeitas;
+- a base fixa de 12 pacientes é restaurada.
+
+Os dados de pacientes não são gravados em `localStorage`. O armazenamento local continua sendo usado somente pelo odontograma demonstrativo e pela preferência de tema.
 
 ## API
 
@@ -137,7 +147,7 @@ Atualiza nome e procedimento de um registro existente.
 
 ### `DELETE /api/pacientes/:id`
 
-Remove um registro existente.
+A exclusão está desativada nesta demonstração. A rota responde com `405 Method Not Allowed` e preserva o registro.
 
 ## Validação e segurança
 
@@ -192,6 +202,8 @@ A CI executa:
 - instalação das dependências;
 - verificação de sintaxe do JavaScript;
 - testes automatizados da API;
+- teste da base fixa de 12 pacientes;
+- teste de bloqueio da exclusão;
 - testes do modelo do odontograma;
 - testes de compatibilidade com o formato antigo salvo no navegador;
 - testes de persistência simulada em `localStorage`;
@@ -217,6 +229,7 @@ A CI executa:
 │       └── visao-geral.png
 ├── public/
 │   ├── app.js
+│   ├── demo-patients.js
 │   ├── favicon.svg
 │   ├── gerenciador-logo-marrom.svg
 │   ├── index.html
@@ -245,8 +258,10 @@ A CI executa:
 - não deve receber informações reais de pacientes;
 - não é um prontuário odontológico de produção;
 - não inclui agenda, financeiro, documentos, prescrições ou outros módulos clínicos;
-- a persistência do backend é somente em memória;
-- o modo estático utiliza apenas o armazenamento local do navegador.
+- alterações de pacientes no backend existem somente em memória;
+- pacientes criados ou editados no GitHub Pages são descartados ao recarregar;
+- a exclusão de pacientes é desativada;
+- `localStorage` é usado apenas para odontograma e preferência de tema.
 
 ## Regra de documentação
 
