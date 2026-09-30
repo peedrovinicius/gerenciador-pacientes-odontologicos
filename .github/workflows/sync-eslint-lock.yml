@@ -1,0 +1,38 @@
+name: Fixar ESLint no lockfile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-eslint-lock.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Atualizar lockfile
+        run: npm install --save-dev --package-lock-only eslint@9.39.1
+
+      - name: Publicar lockfile
+        run: |
+          git add package.json package-lock.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: fixar ESLint no lockfile"
+          git push
