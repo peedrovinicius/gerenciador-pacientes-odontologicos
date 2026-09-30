@@ -121,6 +121,33 @@ test('cria um paciente pela API', async () => {
     assert.equal(pacientes.length, 1);
 });
 
+test('bloqueia criação acima do teto da demonstração', async () => {
+    const { MAX_REGISTROS_DEMO } = require('../public/demo-patients');
+
+    for (let indice = 0; indice < MAX_REGISTROS_DEMO; indice += 1) {
+        pacientes.push({
+            id: `teste-${indice}`,
+            nome: `Paciente ${indice}`,
+            procedimento: 'Avaliação',
+            criadoEm: '2026-09-29T00:00:00.000Z',
+        });
+    }
+
+    const response = await fetch(`${baseUrl}/api/pacientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: 'Paciente Extra', procedimento: 'Profilaxia' }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 409);
+    assert.equal(
+        body.erro,
+        `Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`,
+    );
+    assert.equal(pacientes.length, MAX_REGISTROS_DEMO);
+});
+
 test('rejeita cadastro inválido pela API', async () => {
     const response = await fetch(`${baseUrl}/api/pacientes`, {
         method: 'POST',
@@ -219,6 +246,14 @@ test('retorna cabeçalhos básicos de segurança e impede cache da API', async (
     assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
     assert.equal(response.headers.get('x-frame-options'), 'DENY');
     assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(
+        response.headers.get('permissions-policy'),
+        'camera=(), microphone=(), geolocation=()',
+    );
+    assert.match(
+        response.headers.get('content-security-policy'),
+        /default-src 'self'/,
+    );
 });
 
 test('retorna JSON controlado para corpo JSON malformado', async () => {
