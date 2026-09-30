@@ -37,7 +37,7 @@ body {
 button, input { font: inherit; }
 button { cursor: pointer; }
 button:focus-visible, input:focus-visible {
-  outline: 3px solid rgba(122,51,65,.18);
+  outline: 3px solid var(--wine);
   outline-offset: 3px;
 }
 
