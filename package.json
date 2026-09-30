@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test",
-    "lint": "npx --yes eslint@9.39.1 server.js src public tests eslint.config.js"
+    "lint": "eslint server.js src public tests eslint.config.js"
   },
   "engines": {
     "node": ">=24 <25"
