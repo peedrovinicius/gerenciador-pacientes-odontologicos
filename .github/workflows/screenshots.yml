@@ -1,6 +1,10 @@
 name: Atualizar screenshots do README
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/screenshots.yml"
   workflow_dispatch:
 
 permissions:
@@ -32,12 +36,12 @@ jobs:
           path = Path("/tmp/odontogram-public/index.html")
           html = path.read_text(encoding="utf-8")
           html = html.replace(
-              '<button class="nav-item active" data-view="dashboard" type="button" aria-current="page">Visão geral</button>',
-              '<button class="nav-item" data-view="dashboard" type="button">Visão geral</button>',
+              '<button class="nav-item active" data-view="dashboard" type="button" aria-current="page" aria-controls="view-dashboard">Visão geral</button>',
+              '<button class="nav-item" data-view="dashboard" type="button" aria-controls="view-dashboard">Visão geral</button>',
           )
           html = html.replace(
-              '<button class="nav-item" data-view="odontograma" type="button">Odontograma</button>',
-              '<button class="nav-item active" data-view="odontograma" type="button" aria-current="page">Odontograma</button>',
+              '<button class="nav-item" data-view="odontograma" type="button" aria-controls="view-odontograma">Odontograma</button>',
+              '<button class="nav-item active" data-view="odontograma" type="button" aria-current="page" aria-controls="view-odontograma">Odontograma</button>',
           )
           html = html.replace(
               '<section id="view-dashboard" class="view active"',
