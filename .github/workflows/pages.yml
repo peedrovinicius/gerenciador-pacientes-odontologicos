@@ -1,11 +1,10 @@
 name: Deploy demo to GitHub Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
-    paths:
-      - "public/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -19,13 +18,21 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout commit validated by CI
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Checkout manual deployment
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v6
 
       - name: Configure Pages
