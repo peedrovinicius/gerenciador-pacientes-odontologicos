@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="description" content="Gerenciador de Pacientes Odontológicos: demonstração simples para registros fictícios e odontograma interativo.">
     <title>Gerenciador | Pacientes Odontológicos</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -22,7 +23,7 @@
 
         <div class="bar-actions">
             <span class="status-dot"><i></i> online</span>
-            <button id="alternar-tema" class="icon-control" type="button" aria-label="Alternar entre tema claro e escuro">◒</button>
+            <button id="alternar-tema" class="icon-control" type="button" aria-label="Ativar tema escuro" aria-pressed="false">◒</button>
             <button id="novo-paciente-topo" class="primary-button" type="button">Novo registro</button>
         </div>
     </header>
