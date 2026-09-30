@@ -16,7 +16,7 @@ const detalheData = document.getElementById('detalhe-data');
 const STORAGE_ODONTOGRAMA = 'gerenciador-odontologico-odontograma';
 const STORAGE_TEMA = 'gerenciador-odontologico-tema';
 
-const { cloneDemo } = window.DemoPatients;
+const { cloneDemo, MAX_REGISTROS_DEMO } = window.DemoPatients;
 
 const {
     DENTES_SUPERIORES,
@@ -325,6 +325,10 @@ async function carregarPacientes() {
 }
 
 function salvarRegistroLocal(dados, editando) {
+    if (!editando && pacientesCache.length >= MAX_REGISTROS_DEMO) {
+        throw new Error(`Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`);
+    }
+
     if (editando) {
         pacientesCache = pacientesCache.map((paciente) =>
             paciente.id === pacienteEmEdicao
@@ -506,14 +510,26 @@ function alternarStatusSelecionado() {
     renderizarOdontograma();
 }
 
+function atualizarControleTema(escuro) {
+    const botaoTema = document.getElementById('alternar-tema');
+    botaoTema.setAttribute('aria-pressed', escuro ? 'true' : 'false');
+    botaoTema.setAttribute(
+        'aria-label',
+        escuro ? 'Ativar tema claro' : 'Ativar tema escuro',
+    );
+}
+
 function aplicarTemaSalvo() {
     const tema = localStorage.getItem(STORAGE_TEMA);
-    document.body.classList.toggle('dark-theme', tema === 'dark');
+    const escuro = tema === 'dark';
+    document.body.classList.toggle('dark-theme', escuro);
+    atualizarControleTema(escuro);
 }
 
 function alternarTema() {
     const escuro = document.body.classList.toggle('dark-theme');
     localStorage.setItem(STORAGE_TEMA, escuro ? 'dark' : 'light');
+    atualizarControleTema(escuro);
 }
 
 document.querySelectorAll('.nav-item').forEach((item) => {
