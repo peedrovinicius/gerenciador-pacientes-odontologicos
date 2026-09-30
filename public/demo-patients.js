@@ -9,6 +9,8 @@
         root.DemoPatients = api;
     }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+    const MAX_REGISTROS_DEMO = 20;
+
     const DEMO_PACIENTES = [
         {
             id: 'demo-ana-martins',
@@ -88,5 +90,5 @@
         return DEMO_PACIENTES.map((paciente) => ({ ...paciente }));
     }
 
-    return { DEMO_PACIENTES, cloneDemo };
+    return { DEMO_PACIENTES, MAX_REGISTROS_DEMO, cloneDemo };
 });
