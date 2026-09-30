@@ -51,6 +51,7 @@ app.post('/api/pacientes', (req, res) => {
         id: crypto.randomUUID(),
         ...validation.data,
         criadoEm: new Date().toISOString(),
+        temporario: true,
     };
 
     pacientes.push(paciente);
@@ -73,6 +74,7 @@ app.put('/api/pacientes/:id', (req, res) => {
     pacientes[indice] = {
         ...pacientes[indice],
         ...validation.data,
+        temporario: true,
     };
 
     return res.status(200).json(pacientes[indice]);
