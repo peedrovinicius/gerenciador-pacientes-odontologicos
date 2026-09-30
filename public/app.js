@@ -324,6 +324,10 @@ async function carregarPacientes() {
     renderizarDashboard(pacientesCache);
 }
 
+function mensagemErroApi(resultado, fallback) {
+    return resultado?.mensagem || fallback;
+}
+
 function salvarRegistroLocal(dados, editando) {
     if (!editando && pacientesCache.length >= MAX_REGISTROS_DEMO) {
         throw new Error(`Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`);
@@ -373,7 +377,7 @@ formulario.addEventListener('submit', async (evento) => {
             const resultado = await resposta.json();
 
             if (!resposta.ok) {
-                throw new Error(resultado.erro || 'Não foi possível salvar o registro.');
+                throw new Error(mensagemErroApi(resultado, 'Não foi possível salvar o registro.'));
             }
         }
 
