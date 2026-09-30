@@ -626,10 +626,6 @@ button:focus-visible, input:focus-visible {
   color: #665f57;
 }
 
-.delete-button {
-  background: #f3e5e5;
-  color: var(--danger);
-}
 
 .record-sheet {
   position: sticky;
@@ -1706,4 +1702,26 @@ body.dark-theme .tooth-button.selected {
   .tooth-number-large {
     font-size: 2.6rem;
   }
+}
+
+
+.temporary-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #efe7dd;
+  color: #776b60;
+  border: 1px solid #dfd2c4;
+  font-size: .58rem;
+  font-weight: 820;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+body.dark-theme .temporary-badge {
+  background: #302a25;
+  color: #bcaea1;
+  border-color: #443a33;
 }
