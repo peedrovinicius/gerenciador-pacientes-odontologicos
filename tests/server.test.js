@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const { validatePaciente, pacientes, app } = require('../server');
+const { DEMO_PACIENTES } = require('../public/demo-patients');
 
 let server;
 let baseUrl;
@@ -72,6 +73,12 @@ test('rejeita campos acima do limite de tamanho', () => {
 
     assert.equal(result.valid, false);
     assert.equal(result.error, 'Nome ou procedimento excede o tamanho permitido.');
+});
+
+test('mantém uma base fixa com 12 pacientes fictícios', () => {
+    assert.equal(DEMO_PACIENTES.length, 12);
+    assert.equal(new Set(DEMO_PACIENTES.map((paciente) => paciente.id)).size, 12);
+    assert.ok(DEMO_PACIENTES.every((paciente) => paciente.nome && paciente.procedimento));
 });
 
 test('retorna o estado da aplicação no health check', async () => {
@@ -184,30 +191,23 @@ test('retorna 404 ao tentar atualizar paciente inexistente', async () => {
     assert.equal(body.erro, 'Paciente não encontrado.');
 });
 
-test('remove um paciente existente pela API', async () => {
-    const createResponse = await fetch(`${baseUrl}/api/pacientes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: 'Maria Silva', procedimento: 'Limpeza' }),
-    });
-    const paciente = await createResponse.json();
-
-    const deleteResponse = await fetch(`${baseUrl}/api/pacientes/${paciente.id}`, {
-        method: 'DELETE',
+test('bloqueia exclusão e preserva o registro existente', async () => {
+    pacientes.push({
+        id: 'teste-1',
+        nome: 'Maria Silva',
+        procedimento: 'Limpeza',
+        criadoEm: '2026-09-13T00:00:00.000Z',
     });
 
-    assert.equal(deleteResponse.status, 204);
-    assert.equal(pacientes.length, 0);
-});
-
-test('retorna 404 ao tentar excluir paciente inexistente', async () => {
-    const response = await fetch(`${baseUrl}/api/pacientes/id-inexistente`, {
+    const response = await fetch(`${baseUrl}/api/pacientes/teste-1`, {
         method: 'DELETE',
     });
     const body = await response.json();
 
-    assert.equal(response.status, 404);
-    assert.equal(body.erro, 'Paciente não encontrado.');
+    assert.equal(response.status, 405);
+    assert.equal(response.headers.get('allow'), 'GET, POST, PUT');
+    assert.deepEqual(body, { erro: 'Exclusão desativada nesta demonstração.' });
+    assert.equal(pacientes.length, 1);
 });
 
 test('retorna cabeçalhos básicos de segurança e impede cache da API', async () => {
