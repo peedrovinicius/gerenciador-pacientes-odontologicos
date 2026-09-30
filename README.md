@@ -12,11 +12,18 @@ Aplicação web para gestão demonstrativa de registros odontológicos fictício
 
 ## Visão rápida
 
+![Demonstração animada do odontograma](docs/odontograma-demo.gif)
+
+<details>
+<summary>Ver capturas estáticas</summary>
+
 ![Visão geral do Gerenciador](docs/screenshots/visao-geral.png)
 
 ![Odontograma interativo do Gerenciador](docs/screenshots/odontograma.png)
 
-As capturas do README podem ser atualizadas manualmente pelo workflow dedicado do GitHub Actions.
+</details>
+
+O GIF e as capturas podem ser atualizados manualmente pelos workflows dedicados do GitHub Actions.
 
 ## Destaques técnicos
 
@@ -247,6 +254,7 @@ O workflow de CI executa `npm ci`, verificação de sintaxe, ESLint, testes auto
 │   │   └── screenshots.yml
 │   └── pull_request_template.md
 ├── docs/
+│   ├── odontograma-demo.gif
 │   └── screenshots/
 ├── public/
 │   ├── app.js
