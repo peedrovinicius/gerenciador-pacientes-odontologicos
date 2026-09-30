@@ -30,7 +30,7 @@ O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar um
 
 ![Odontograma interativo do Gerenciador](docs/screenshots/odontograma.png)
 
-As capturas são atualizadas por um workflow do GitHub Actions quando a interface é modificada.
+As capturas do README podem ser atualizadas manualmente pelo workflow dedicado do GitHub Actions.
 
 ## Funcionalidades
 
@@ -47,6 +47,7 @@ As capturas são atualizadas por um workflow do GitHub Actions quando a interfac
 
 - base fixa com 12 pacientes fictícios;
 - cadastro temporário de nome do paciente e procedimento;
+- limite de 20 registros por sessão na demonstração;
 - listagem dos registros;
 - busca por paciente ou procedimento;
 - visualização de ficha demonstrativa;
@@ -98,13 +99,13 @@ Quando executada junto ao backend, o frontend usa:
 - `POST /api/pacientes`
 - `PUT /api/pacientes/:id`
 
-A base inicial contém 12 pacientes fictícios. Novos registros e edições ficam somente na memória do processo e desaparecem quando o servidor é reiniciado.
+A base inicial contém 12 pacientes fictícios. Novos registros e edições ficam somente na memória do processo e desaparecem quando o servidor é reiniciado. A demonstração aceita no máximo 20 registros por sessão.
 
 A exclusão é intencionalmente desativada. Requisições `DELETE /api/pacientes/:id` retornam `405 Method Not Allowed` e não removem registros.
 
 ### Como demonstração estática
 
-No GitHub Pages não existe backend Node.js. A interface inicia sempre com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições apenas na memória da página.
+No GitHub Pages não existe backend Node.js. A interface inicia sempre com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições apenas na memória da página, respeitando o mesmo teto de 20 registros da demonstração.
 
 Ao recarregar ou reabrir a demonstração:
 
@@ -161,7 +162,9 @@ O backend:
 - retorna respostas controladas para JSON inválido;
 - remove `X-Powered-By`;
 - desabilita cache nas rotas `/api`;
-- envia cabeçalhos básicos contra MIME sniffing e embedding em frames.
+- envia cabeçalhos contra MIME sniffing e embedding em frames;
+- restringe câmera, microfone e geolocalização com `Permissions-Policy`;
+- aplica uma `Content-Security-Policy` compatível com a demonstração.
 
 No frontend, dados recebidos são inseridos por propriedades como `textContent`, sem interpolação direta em `innerHTML`.
 
@@ -191,11 +194,19 @@ Acesse:
 http://localhost:3000
 ```
 
+Nenhuma variável de ambiente é obrigatória para a execução local. Para verificar rapidamente a API:
+
+```bash
+curl http://localhost:3000/api/health
+```
+
 ## Testes
 
 ```bash
 npm test
 ```
+
+O deploy do GitHub Pages é acionado somente depois da conclusão bem-sucedida do workflow de CI.
 
 A CI executa:
 
@@ -204,6 +215,8 @@ A CI executa:
 - testes automatizados da API;
 - teste da base fixa de 12 pacientes;
 - teste de bloqueio da exclusão;
+- teste do limite de registros;
+- testes dos cabeçalhos de segurança, incluindo CSP e `Permissions-Policy`;
 - testes do modelo do odontograma;
 - testes de compatibilidade com o formato antigo salvo no navegador;
 - testes de persistência simulada em `localStorage`;
@@ -260,6 +273,7 @@ A CI executa:
 - não inclui agenda, financeiro, documentos, prescrições ou outros módulos clínicos;
 - alterações de pacientes no backend existem somente em memória;
 - pacientes criados ou editados no GitHub Pages são descartados ao recarregar;
+- a demonstração aceita no máximo 20 registros por sessão;
 - a exclusão de pacientes é desativada;
 - `localStorage` é usado apenas para odontograma e preferência de tema.
 
