@@ -7,6 +7,17 @@ const { DEMO_PACIENTES } = require('../public/demo-patients');
 let server;
 let baseUrl;
 
+function assertErro(body, codigo, mensagem, campos) {
+    assert.equal(body.codigo, codigo);
+    assert.equal(body.mensagem, mensagem);
+
+    if (campos) {
+        assert.deepEqual(body.campos, campos);
+    } else {
+        assert.equal(Object.prototype.hasOwnProperty.call(body, 'campos'), false);
+    }
+}
+
 test.before(async () => {
     server = app.listen(0);
     await new Promise((resolve) => server.once('listening', resolve));
@@ -41,6 +52,7 @@ test('rejeita campos ausentes', () => {
 
     assert.equal(result.valid, false);
     assert.equal(result.error, 'Nome e procedimento são obrigatórios.');
+    assert.deepEqual(result.fields, ['procedimento']);
 });
 
 test('rejeita tipos inválidos', () => {
@@ -51,6 +63,7 @@ test('rejeita tipos inválidos', () => {
 
     assert.equal(result.valid, false);
     assert.equal(result.error, 'Nome e procedimento são obrigatórios.');
+    assert.deepEqual(result.fields, ['nome', 'procedimento']);
 });
 
 test('remove espaços extras dos campos', () => {
@@ -73,6 +86,7 @@ test('rejeita campos acima do limite de tamanho', () => {
 
     assert.equal(result.valid, false);
     assert.equal(result.error, 'Nome ou procedimento excede o tamanho permitido.');
+    assert.deepEqual(result.fields, ['nome']);
 });
 
 test('mantém uma base fixa com 12 pacientes fictícios', () => {
@@ -141,8 +155,9 @@ test('bloqueia criação acima do teto da demonstração', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 409);
-    assert.equal(
-        body.erro,
+    assertErro(
+        body,
+        'LIMITE_DEMO_ATINGIDO',
         `Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`,
     );
     assert.equal(pacientes.length, MAX_REGISTROS_DEMO);
@@ -158,7 +173,12 @@ test('rejeita cadastro inválido pela API', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 400);
-    assert.equal(body.erro, 'Nome e procedimento são obrigatórios.');
+    assertErro(
+        body,
+        'DADOS_INVALIDOS',
+        'Nome e procedimento são obrigatórios.',
+        ['procedimento'],
+    );
     assert.equal(pacientes.length, 0);
 });
 
@@ -201,7 +221,12 @@ test('rejeita atualização inválida pela API', async () => {
     const body = await updateResponse.json();
 
     assert.equal(updateResponse.status, 400);
-    assert.equal(body.erro, 'Nome e procedimento são obrigatórios.');
+    assertErro(
+        body,
+        'DADOS_INVALIDOS',
+        'Nome e procedimento são obrigatórios.',
+        ['procedimento'],
+    );
     assert.equal(pacientes[0].nome, 'Maria Silva');
     assert.equal(pacientes[0].procedimento, 'Limpeza');
 });
@@ -215,7 +240,7 @@ test('retorna 404 ao tentar atualizar paciente inexistente', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 404);
-    assert.equal(body.erro, 'Paciente não encontrado.');
+    assertErro(body, 'PACIENTE_NAO_ENCONTRADO', 'Paciente não encontrado.');
 });
 
 test('bloqueia exclusão e preserva o registro existente', async () => {
@@ -233,7 +258,7 @@ test('bloqueia exclusão e preserva o registro existente', async () => {
 
     assert.equal(response.status, 405);
     assert.equal(response.headers.get('allow'), 'GET, POST, PUT');
-    assert.deepEqual(body, { erro: 'Exclusão desativada nesta demonstração.' });
+    assertErro(body, 'EXCLUSAO_DESATIVADA', 'Exclusão desativada nesta demonstração.');
     assert.equal(pacientes.length, 1);
 });
 
@@ -265,7 +290,7 @@ test('retorna JSON controlado para corpo JSON malformado', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 400);
-    assert.deepEqual(body, { erro: 'JSON inválido.' });
+    assertErro(body, 'JSON_INVALIDO', 'JSON inválido.');
 });
 
 test('rejeita payload acima de 10kb com resposta JSON controlada', async () => {
@@ -280,7 +305,7 @@ test('rejeita payload acima de 10kb com resposta JSON controlada', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 413);
-    assert.deepEqual(body, { erro: 'Payload excede o limite de 10kb.' });
+    assertErro(body, 'PAYLOAD_EXCEDIDO', 'Payload excede o limite de 10kb.');
 });
 
 test('retorna 404 para uma rota inexistente', async () => {
@@ -288,7 +313,7 @@ test('retorna 404 para uma rota inexistente', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 404);
-    assert.equal(body.erro, 'Recurso não encontrado.');
+    assertErro(body, 'RECURSO_NAO_ENCONTRADO', 'Recurso não encontrado.');
 });
 
 
@@ -301,7 +326,7 @@ test('rejeita criação sem Content-Type application/json', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 415);
-    assert.deepEqual(body, { erro: 'Content-Type deve ser application/json.' });
+    assertErro(body, 'CONTENT_TYPE_INVALIDO', 'Content-Type deve ser application/json.');
     assert.equal(pacientes.length, 0);
 });
 
@@ -321,6 +346,6 @@ test('rejeita atualização sem Content-Type application/json', async () => {
     const body = await response.json();
 
     assert.equal(response.status, 415);
-    assert.deepEqual(body, { erro: 'Content-Type deve ser application/json.' });
+    assertErro(body, 'CONTENT_TYPE_INVALIDO', 'Content-Type deve ser application/json.');
     assert.equal(pacientes[0].nome, 'Maria Silva');
 });
