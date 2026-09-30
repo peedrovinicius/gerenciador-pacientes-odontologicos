@@ -25,8 +25,35 @@ jobs:
       - name: Syntax check
         run: node --check server.js && node --check src/app.js && node --check src/store.js && node --check src/validation.js && node --check public/demo-patients.js && node --check public/odontogram-model.js && node --check public/app.js
 
+      - name: Lint
+        run: npm run lint
+
       - name: Run tests
         run: npm test
+
+      - name: Accessibility audit
+        run: |
+          npm start >/tmp/gerenciador.log 2>&1 &
+          APP_PID=$!
+          sleep 3
+          npx --yes lighthouse@12 http://127.0.0.1:3000             --only-categories=accessibility             --chrome-flags="--headless --no-sandbox --disable-gpu"             --output=json             --output-path=/tmp/lighthouse.json             --quiet
+          kill $APP_PID || true
+          node - <<'NODE'
+          const report = require('/tmp/lighthouse.json');
+          const score = report.categories.accessibility.score;
+          const refs = new Set(report.categories.accessibility.auditRefs.map((item) => item.id));
+          const failed = Object.entries(report.audits)
+              .filter(([id, audit]) => refs.has(id) && audit.score !== null && audit.score < 1)
+              .map(([, audit]) => `${audit.title}: ${audit.displayValue || 'revisar'}`);
+
+          console.log(`Accessibility score: ${Math.round(score * 100)}`);
+          if (failed.length) {
+              console.log('Auditorias com observações:');
+              failed.forEach((item) => console.log(`- ${item}`));
+          }
+
+          if (score < 0.95) process.exit(1);
+          NODE
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
