@@ -4,151 +4,140 @@
 ![Node.js](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 
-Aplicação web simples para organizar registros odontológicos fictícios, demonstrar integração entre frontend e backend e apresentar um odontograma interativo.
+Aplicação web para gestão demonstrativa de registros odontológicos fictícios, com API REST em Node.js e Express, odontograma FDI interativo, validação, testes automatizados, controles de segurança e CI/CD.
 
-**Demo principal:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/
+**Demo:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/
 
-> Projeto demonstrativo público. Não utilize dados reais de pacientes.
+> Ambiente público de demonstração. Use somente dados fictícios.
 
-## Escopo
-
-O projeto tem somente três áreas:
-
-1. **Visão geral**
-2. **Pacientes**
-3. **Odontograma**
-
-O objetivo não é reproduzir um sistema clínico completo. O foco é mostrar uma aplicação pequena, funcional, bem apresentada e fácil de entender.
-
-## Interface
-
-### Visão geral
+## Visão rápida
 
 ![Visão geral do Gerenciador](docs/screenshots/visao-geral.png)
-
-### Odontograma
 
 ![Odontograma interativo do Gerenciador](docs/screenshots/odontograma.png)
 
 As capturas do README podem ser atualizadas manualmente pelo workflow dedicado do GitHub Actions.
 
+## Destaques técnicos
+
+- API REST com Node.js 24 e Express 4;
+- odontograma adulto FDI com 32 elementos e estados clínicos demonstrativos;
+- base compartilhada de pacientes fictícios entre frontend e backend;
+- validação de entrada, respostas HTTP controladas e limite de payload;
+- `Content-Security-Policy`, `Permissions-Policy` e outros cabeçalhos de segurança;
+- testes automatizados da API e da lógica do odontograma;
+- CI com verificação de sintaxe, testes e auditoria de dependências;
+- deploy do GitHub Pages condicionado ao sucesso do CI;
+- interface responsiva com tema claro e escuro e navegação acessível por teclado.
+
+## Proposta
+
+O projeto concentra a experiência em três áreas:
+
+1. **Visão geral** — indicadores e atividade recente;
+2. **Pacientes** — consulta, busca, cadastro temporário e edição temporária;
+3. **Odontograma** — representação FDI interativa com exemplos clínicos fictícios.
+
+A demonstração pública foi desenhada para ser restaurável e previsível: inicia sempre com uma base controlada de pacientes fictícios, não persiste dados de pacientes inseridos por visitantes e impede exclusões que alterariam a experiência para outras pessoas.
+
 ## Funcionalidades
 
 ### Visão geral
 
-- quantidade de pacientes cadastrados;
+- total de pacientes exibidos;
 - quantidade de registros recentes;
 - quantidade de tipos de procedimentos;
-- lista dos registros mais recentes;
-- resumo visual dos procedimentos cadastrados;
+- lista de atividade recente;
+- resumo visual dos procedimentos;
 - indicador de disponibilidade da demonstração.
 
 ### Pacientes
 
 - base fixa com 12 pacientes fictícios;
-- cadastro temporário de nome do paciente e procedimento;
-- limite de 20 registros por sessão na demonstração;
-- listagem dos registros;
 - busca por paciente ou procedimento;
 - visualização de ficha demonstrativa;
-- edição temporária de registro existente;
-- indicação visual para registros temporários;
-- exclusão desativada;
+- cadastro temporário;
+- edição temporária;
+- identificação visual de registros temporários;
+- limite de 20 registros por sessão;
+- exclusão desativada para preservar a base da demonstração;
 - mensagens de sucesso e erro.
 
 ### Odontograma
 
-- dentição adulta representada pelo sistema FDI;
+- dentição adulta no sistema FDI;
 - 32 elementos dentários;
-- desenho visual diferenciado para molares, pré-molares, caninos e incisivos;
+- representação visual diferenciada para molares, pré-molares, caninos e incisivos;
 - incisivos inferiores 31, 32, 41 e 42 representados com anatomia mais estreita;
-- seleção de um dente por clique;
-- painel lateral com número FDI, nome anatômico, condição e status;
-- três estados demonstrativos:
-  - hígido;
-  - planejado;
-  - realizado;
-- exemplos fictícios pré-carregados de cárie, restauração, canal e profilaxia;
-- atalhos para aplicar esses quatro exemplos ao dente selecionado;
-- cárie e canal demonstrados como planejados;
-- restauração e profilaxia demonstradas como realizadas;
+- seleção de dentes por teclado ou ponteiro;
+- nome acessível com número FDI, estado e condição;
+- três estados demonstrativos: hígido, planejado e realizado;
+- exemplos fictícios de cárie, restauração, canal e profilaxia;
+- atalhos para aplicar exemplos ao dente selecionado;
+- painel lateral com número, nome anatômico, condição e status;
 - contadores por estado;
-- botão para restaurar os exemplos iniciais;
-- armazenamento local do estado do odontograma no navegador.
+- restauração dos exemplos iniciais;
+- persistência local apenas do odontograma.
 
-### Interface
+## Arquitetura
 
-- identidade visual editorial em marrom, vinho, marfim e tons neutros;
-- logomarca **Gerenciador — Pacientes Odontológicos** adaptada à paleta do site;
-- favicon próprio baseado na identidade visual;
-- layout editorial e responsivo;
-- tema claro e escuro;
-- 12 pacientes fictícios iniciais para demonstração;
-- cadastros e edições de pacientes temporários;
-- navegação entre as três áreas sem recarregar a página.
+```mermaid
+flowchart LR
+    A[Visitante] --> B[GitHub Pages]
+    B --> C[Frontend HTML + CSS + JavaScript]
+    C --> D[Base fictícia compartilhada]
+    C --> E[Odontograma e tema no localStorage]
 
-## Como a demonstração funciona
+    F[Execução com Node.js] --> G[Express API]
+    G --> D
+    G --> H[Estado temporário em memória]
 
-A interface pode operar de duas formas.
+    I[Push em main] --> J[CI]
+    J --> K[Verificação de sintaxe]
+    J --> L[Testes automatizados]
+    J --> M[Auditoria de dependências]
+    J -->|sucesso| N[Deploy GitHub Pages]
+```
 
-### Com a API Express
+O arquivo `public/demo-patients.js` é compartilhado pela interface estática e pelo backend para manter a mesma base inicial de 12 pacientes fictícios nos dois modos de execução.
 
-Quando executada junto ao backend, o frontend usa:
+## Modos de execução
 
-- `GET /api/pacientes`
-- `POST /api/pacientes`
-- `PUT /api/pacientes/:id`
+### GitHub Pages
 
-A base inicial contém 12 pacientes fictícios. Novos registros e edições ficam somente na memória do processo e desaparecem quando o servidor é reiniciado. A demonstração aceita no máximo 20 registros por sessão.
+A demo principal é totalmente estática. Ela inicia com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições somente na memória da página.
 
-A exclusão é intencionalmente desativada. Requisições `DELETE /api/pacientes/:id` retornam `405 Method Not Allowed` e não removem registros.
-
-### Como demonstração estática
-
-No GitHub Pages não existe backend Node.js. A interface inicia sempre com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições apenas na memória da página, respeitando o mesmo teto de 20 registros da demonstração.
-
-Ao recarregar ou reabrir a demonstração:
+Ao recarregar ou reabrir:
 
 - pacientes adicionados durante a sessão desaparecem;
 - edições são desfeitas;
-- a base fixa de 12 pacientes é restaurada.
+- a base fictícia original é restaurada.
 
-Os dados de pacientes não são gravados em `localStorage`. O armazenamento local continua sendo usado somente pelo odontograma demonstrativo e pela preferência de tema.
+Dados de pacientes não são gravados em `localStorage`. O armazenamento local é utilizado apenas para o odontograma e para a preferência de tema.
+
+### Node.js + Express
+
+Ao executar o projeto localmente, a interface utiliza a API Express. Cadastros e edições permanecem somente na memória do processo e são marcados como temporários.
+
+O servidor aplica o mesmo teto de 20 registros da demo. A exclusão responde com `405 Method Not Allowed` e não altera a base.
 
 ## API
 
-### `GET /api/health`
+| Método | Rota | Comportamento |
+| --- | --- | --- |
+| `GET` | `/api/health` | Verifica disponibilidade da API |
+| `GET` | `/api/pacientes` | Lista os registros da sessão |
+| `POST` | `/api/pacientes` | Cria um registro temporário |
+| `PUT` | `/api/pacientes/:id` | Edita um registro temporariamente |
+| `DELETE` | `/api/pacientes/:id` | Bloqueado na demo; retorna `405` |
 
-Retorna:
+Exemplo:
 
-```json
-{
-  "status": "ok"
-}
+```bash
+curl -X POST http://localhost:3000/api/pacientes \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Maria Silva","procedimento":"Profilaxia"}'
 ```
-
-### `GET /api/pacientes`
-
-Retorna os registros da execução atual.
-
-### `POST /api/pacientes`
-
-Exemplo de corpo:
-
-```json
-{
-  "nome": "Maria Silva",
-  "procedimento": "Profilaxia"
-}
-```
-
-### `PUT /api/pacientes/:id`
-
-Atualiza nome e procedimento de um registro existente.
-
-### `DELETE /api/pacientes/:id`
-
-A exclusão está desativada nesta demonstração. A rota responde com `405 Method Not Allowed` e preserva o registro.
 
 ## Validação e segurança
 
@@ -157,27 +146,38 @@ O backend:
 - exige `Content-Type: application/json` em criação e atualização;
 - valida nome e procedimento;
 - remove espaços extras;
-- aplica limites de tamanho;
-- limita o payload JSON a `10kb`;
-- retorna respostas controladas para JSON inválido;
+- limita o tamanho dos campos;
+- limita o corpo JSON a `10kb`;
+- limita a demonstração a 20 registros por sessão;
+- trata JSON inválido e payload excedido com respostas controladas;
 - remove `X-Powered-By`;
 - desabilita cache nas rotas `/api`;
-- envia cabeçalhos contra MIME sniffing e embedding em frames;
-- restringe câmera, microfone e geolocalização com `Permissions-Policy`;
-- aplica uma `Content-Security-Policy` compatível com a demonstração.
+- envia `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` e `Permissions-Policy`;
+- aplica `Content-Security-Policy`.
 
-No frontend, dados recebidos são inseridos por propriedades como `textContent`, sem interpolação direta em `innerHTML`.
+No frontend, dados dinâmicos são inseridos com APIs do DOM como `textContent`, sem interpolação direta em `innerHTML`.
+
+## Decisões de projeto
+
+**Dados fictícios e efêmeros.** A demo pública não foi concebida para armazenar dados clínicos reais. A base controlada e as alterações temporárias mantêm o ambiente restaurável e evitam persistência acidental de informações inseridas por visitantes.
+
+**Exclusão bloqueada.** A rota `DELETE` existe no contrato da API, mas é bloqueada na demonstração para impedir que um visitante remova registros da base utilizada por outros usuários.
+
+**Dois modos de execução.** GitHub Pages apresenta a experiência visual sem depender de servidor. A execução com Node.js disponibiliza a API Express e demonstra o comportamento HTTP do projeto.
+
+**Estado local limitado.** `localStorage` é usado somente para preferências de interface e odontograma demonstrativo, nunca para pacientes.
+
+**Escopo clínico controlado.** Agenda, financeiro, documentos, prescrições e prontuário clínico completo ficam fora deste repositório para preservar uma proposta concentrada e verificável.
 
 ## Tecnologias
 
-- HTML5
-- CSS3
-- JavaScript
-- Node.js 24
-- Express 4
-- Node Test Runner
-- GitHub Actions
-- GitHub Pages
+| Área | Tecnologia |
+| --- | --- |
+| Frontend | HTML5, CSS3, JavaScript |
+| Backend | Node.js 24, Express 4 |
+| Testes | Node Test Runner |
+| CI/CD | GitHub Actions |
+| Demo | GitHub Pages |
 
 ## Executar localmente
 
@@ -188,39 +188,36 @@ npm ci
 npm start
 ```
 
-Acesse:
+Acesse `http://localhost:3000`.
 
-```text
-http://localhost:3000
-```
+Nenhuma variável de ambiente é obrigatória para a execução local.
 
-Nenhuma variável de ambiente é obrigatória para a execução local. Para verificar rapidamente a API:
+Teste rápido da API:
 
 ```bash
 curl http://localhost:3000/api/health
 ```
 
-## Testes
+## Testes e CI
 
 ```bash
 npm test
 ```
 
-O deploy do GitHub Pages é acionado somente depois da conclusão bem-sucedida do workflow de CI.
+A suíte cobre:
 
-A CI executa:
+- validação de campos obrigatórios, tipos e limites;
+- normalização de espaços;
+- criação e atualização pela API;
+- respostas `404`, `409`, `413`, `415` e bloqueio de `DELETE`;
+- cabeçalhos de segurança, CSP e `Permissions-Policy`;
+- base fixa de 12 pacientes;
+- teto de 20 registros;
+- estado inicial e persistência do odontograma;
+- compatibilidade com formato legado do estado do odontograma;
+- anatomia visual e nomenclatura FDI.
 
-- instalação das dependências;
-- verificação de sintaxe do JavaScript;
-- testes automatizados da API;
-- teste da base fixa de 12 pacientes;
-- teste de bloqueio da exclusão;
-- teste do limite de registros;
-- testes dos cabeçalhos de segurança, incluindo CSP e `Permissions-Policy`;
-- testes do modelo do odontograma;
-- testes de compatibilidade com o formato antigo salvo no navegador;
-- testes de persistência simulada em `localStorage`;
-- auditoria das dependências de produção.
+O workflow de CI executa `npm ci`, verificação de sintaxe, testes automatizados e `npm audit --omit=dev --audit-level=high`. O deploy do GitHub Pages é iniciado somente após a conclusão bem-sucedida do CI.
 
 ## Estrutura
 
@@ -228,9 +225,6 @@ A CI executa:
 .
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.yml
-│   │   ├── config.yml
-│   │   └── feature_request.yml
 │   ├── workflows/
 │   │   ├── ci.yml
 │   │   ├── pages.yml
@@ -238,8 +232,6 @@ A CI executa:
 │   └── pull_request_template.md
 ├── docs/
 │   └── screenshots/
-│       ├── odontograma.png
-│       └── visao-geral.png
 ├── public/
 │   ├── app.js
 │   ├── demo-patients.js
@@ -255,7 +247,6 @@ A CI executa:
 ├── tests/
 │   ├── odontogram.test.js
 │   └── server.test.js
-├── .gitignore
 ├── CONTRIBUTING.md
 ├── package.json
 ├── package-lock.json
@@ -264,23 +255,6 @@ A CI executa:
 └── README.md
 ```
 
-## Limitações intencionais
+## Documentação como contrato
 
-- não possui banco de dados;
-- não possui autenticação ou autorização;
-- não deve receber informações reais de pacientes;
-- não é um prontuário odontológico de produção;
-- não inclui agenda, financeiro, documentos, prescrições ou outros módulos clínicos;
-- alterações de pacientes no backend existem somente em memória;
-- pacientes criados ou editados no GitHub Pages são descartados ao recarregar;
-- a demonstração aceita no máximo 20 registros por sessão;
-- a exclusão de pacientes é desativada;
-- `localStorage` é usado apenas para odontograma e preferência de tema.
-
-## Regra de documentação
-
-O README acompanha o escopo real da aplicação.
-
-Qualquer funcionalidade adicionada ao projeto deve ser registrada neste arquivo na mesma alteração. Da mesma forma, uma funcionalidade removida da aplicação deve ser removida do README.
-
-Assim, a documentação não anuncia recursos inexistentes e a interface não mantém recursos sem documentação.
+O README acompanha o comportamento real da aplicação. Funcionalidades adicionadas ou removidas devem ser refletidas neste arquivo na mesma alteração.
