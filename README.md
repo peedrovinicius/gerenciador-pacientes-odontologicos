@@ -23,10 +23,11 @@ As capturas do README podem ser atualizadas manualmente pelo workflow dedicado d
 - API REST com Node.js 24 e Express 4;
 - odontograma adulto FDI com 32 elementos e estados clínicos demonstrativos;
 - base compartilhada de pacientes fictícios entre frontend e backend;
-- validação de entrada, respostas HTTP controladas e limite de payload;
+- validação de entrada, contrato padronizado de erros e limite de payload;
 - `Content-Security-Policy`, `Permissions-Policy` e outros cabeçalhos de segurança;
 - testes automatizados da API e da lógica do odontograma;
-- CI com verificação de sintaxe, testes e auditoria de dependências;
+- ESLint e auditoria automatizada de acessibilidade com Lighthouse;
+- CI com verificação de sintaxe, lint, testes e auditoria de dependências;
 - deploy do GitHub Pages condicionado ao sucesso do CI;
 - interface responsiva com tema claro e escuro e navegação acessível por teclado.
 
@@ -139,6 +140,18 @@ curl -X POST http://localhost:3000/api/pacientes \
   -d '{"nome":"Maria Silva","procedimento":"Profilaxia"}'
 ```
 
+Erros seguem um contrato único:
+
+```json
+{
+  "codigo": "DADOS_INVALIDOS",
+  "mensagem": "Nome e procedimento são obrigatórios.",
+  "campos": ["procedimento"]
+}
+```
+
+O campo `campos` aparece somente quando a resposta precisa indicar quais entradas exigem correção.
+
 ## Validação e segurança
 
 O backend:
@@ -176,6 +189,7 @@ No frontend, dados dinâmicos são inseridos com APIs do DOM como `textContent`,
 | Frontend | HTML5, CSS3, JavaScript |
 | Backend | Node.js 24, Express 4 |
 | Testes | Node Test Runner |
+| Qualidade | ESLint, Lighthouse |
 | CI/CD | GitHub Actions |
 | Demo | GitHub Pages |
 
@@ -198,9 +212,10 @@ Teste rápido da API:
 curl http://localhost:3000/api/health
 ```
 
-## Testes e CI
+## Qualidade, testes e CI
 
 ```bash
+npm run lint
 npm test
 ```
 
@@ -217,7 +232,7 @@ A suíte cobre:
 - compatibilidade com formato legado do estado do odontograma;
 - anatomia visual e nomenclatura FDI.
 
-O workflow de CI executa `npm ci`, verificação de sintaxe, testes automatizados e `npm audit --omit=dev --audit-level=high`. O deploy do GitHub Pages é iniciado somente após a conclusão bem-sucedida do CI.
+O workflow de CI executa `npm ci`, verificação de sintaxe, ESLint, testes automatizados, auditoria de acessibilidade com Lighthouse e `npm audit --omit=dev --audit-level=high`. A auditoria exige pontuação mínima de 95 em acessibilidade. O deploy do GitHub Pages é iniciado somente após a conclusão bem-sucedida do CI.
 
 ## Estrutura
 
@@ -227,6 +242,7 @@ O workflow de CI executa `npm ci`, verificação de sintaxe, testes automatizado
 │   ├── ISSUE_TEMPLATE/
 │   ├── workflows/
 │   │   ├── ci.yml
+│   │   ├── demo-gif.yml
 │   │   ├── pages.yml
 │   │   └── screenshots.yml
 │   └── pull_request_template.md
@@ -248,6 +264,7 @@ O workflow de CI executa `npm ci`, verificação de sintaxe, testes automatizado
 │   ├── odontogram.test.js
 │   └── server.test.js
 ├── CONTRIBUTING.md
+├── eslint.config.js
 ├── package.json
 ├── package-lock.json
 ├── render.yaml
