@@ -78,15 +78,11 @@ app.put('/api/pacientes/:id', (req, res) => {
     return res.status(200).json(pacientes[indice]);
 });
 
-app.delete('/api/pacientes/:id', (req, res) => {
-    const indice = pacientes.findIndex((paciente) => paciente.id === req.params.id);
-
-    if (indice === -1) {
-        return res.status(404).json({ erro: 'Paciente não encontrado.' });
-    }
-
-    pacientes.splice(indice, 1);
-    return res.status(204).send();
+app.delete('/api/pacientes/:id', (_req, res) => {
+    res.setHeader('Allow', 'GET, POST, PUT');
+    return res.status(405).json({
+        erro: 'Exclusão desativada nesta demonstração.',
+    });
 });
 
 app.use((error, _req, res, next) => {
