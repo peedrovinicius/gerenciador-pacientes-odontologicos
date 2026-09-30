@@ -44,12 +44,18 @@ jobs:
           const refs = new Set(report.categories.accessibility.auditRefs.map((item) => item.id));
           const failed = Object.entries(report.audits)
               .filter(([id, audit]) => refs.has(id) && audit.score !== null && audit.score < 1)
-              .map(([, audit]) => `${audit.title}: ${audit.displayValue || 'revisar'}`);
+              .map(([id, audit]) => ({ id, audit }));
 
           console.log(`Accessibility score: ${Math.round(score * 100)}`);
           if (failed.length) {
               console.log('Auditorias com observações:');
-              failed.forEach((item) => console.log(`- ${item}`));
+              failed.forEach(({ id, audit }) => {
+                  console.log(`- ${audit.title}: ${audit.displayValue || 'revisar'}`);
+                  const selectors = (audit.details?.items || [])
+                      .map((item) => item.node?.selector)
+                      .filter(Boolean);
+                  selectors.slice(0, 8).forEach((selector) => console.log(`  ${id}: ${selector}`));
+              });
           }
 
           if (score < 0.95) process.exit(1);
