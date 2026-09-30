@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Syntax check
-        run: node --check server.js && node --check src/app.js && node --check src/store.js && node --check src/validation.js && node --check public/odontogram-model.js && node --check public/app.js
+        run: node --check server.js && node --check src/app.js && node --check src/store.js && node --check src/validation.js && node --check public/demo-patients.js && node --check public/odontogram-model.js && node --check public/app.js
 
       - name: Run tests
         run: npm test
