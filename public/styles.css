@@ -36,6 +36,25 @@ body {
 
 button, input { font: inherit; }
 button { cursor: pointer; }
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper-2);
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform .15s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
 button:focus-visible, input:focus-visible {
   outline: 3px solid var(--wine);
   outline-offset: 3px;
