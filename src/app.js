@@ -1,7 +1,7 @@
 const crypto = require('node:crypto');
 const express = require('express');
 
-const { pacientes } = require('./store');
+const { pacientes, MAX_REGISTROS_DEMO } = require('./store');
 const { validatePaciente } = require('./validation');
 
 const app = express();
@@ -13,6 +13,10 @@ app.use((_req, res, next) => {
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+    );
     next();
 });
 
@@ -41,6 +45,12 @@ app.get('/api/pacientes', (_req, res) => {
 });
 
 app.post('/api/pacientes', (req, res) => {
+    if (pacientes.length >= MAX_REGISTROS_DEMO) {
+        return res.status(409).json({
+            erro: `Limite da demonstração atingido: máximo de ${MAX_REGISTROS_DEMO} registros por sessão.`,
+        });
+    }
+
     const validation = validatePaciente(req.body);
 
     if (!validation.valid) {
