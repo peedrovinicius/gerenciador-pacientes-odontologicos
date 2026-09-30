@@ -1,0 +1,128 @@
+name: Gerar GIF do odontograma
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/demo-gif.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gif:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Preparar estados do odontograma
+        run: |
+          rm -rf /tmp/odontogram-gif
+          mkdir -p /tmp/odontogram-gif
+          for frame in 1 2 3; do
+            mkdir -p "/tmp/odontogram-gif/frame$frame"
+            cp -R public/. "/tmp/odontogram-gif/frame$frame/"
+          done
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def prepare_html(path):
+              html = path.read_text(encoding="utf-8")
+              html = html.replace(
+                  '<button class="nav-item active" data-view="dashboard" type="button" aria-current="page" aria-controls="view-dashboard">Visão geral</button>',
+                  '<button class="nav-item" data-view="dashboard" type="button" aria-controls="view-dashboard">Visão geral</button>',
+              )
+              html = html.replace(
+                  '<button class="nav-item" data-view="odontograma" type="button" aria-controls="view-odontograma">Odontograma</button>',
+                  '<button class="nav-item active" data-view="odontograma" type="button" aria-current="page" aria-controls="view-odontograma">Odontograma</button>',
+              )
+              html = html.replace(
+                  '<section id="view-dashboard" class="view active"',
+                  '<section id="view-dashboard" class="view"',
+              )
+              html = html.replace(
+                  '<section id="view-odontograma" class="view">',
+                  '<section id="view-odontograma" class="view active">',
+              )
+              path.write_text(html, encoding="utf-8")
+
+          for frame in ("frame1", "frame2", "frame3"):
+              prepare_html(Path("/tmp/odontogram-gif") / frame / "index.html")
+
+          frame2 = Path("/tmp/odontogram-gif/frame2/odontogram-model.js")
+          text = frame2.read_text(encoding="utf-8")
+          text = text.replace(
+              "estado[16] = registroOdontograma('planned', 'carie');",
+              "estado[16] = registroOdontograma('done', 'restauracao');",
+          )
+          frame2.write_text(text, encoding="utf-8")
+
+          frame3 = Path("/tmp/odontogram-gif/frame3/odontogram-model.js")
+          text = frame3.read_text(encoding="utf-8")
+          text = text.replace(
+              "estado[16] = registroOdontograma('planned', 'carie');",
+              "estado[16] = registroOdontograma('healthy', null);",
+          )
+          frame3.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Iniciar servidores
+        run: |
+          python3 -m http.server 4181 --directory /tmp/odontogram-gif/frame1 >/tmp/frame1.log 2>&1 &
+          python3 -m http.server 4182 --directory /tmp/odontogram-gif/frame2 >/tmp/frame2.log 2>&1 &
+          python3 -m http.server 4183 --directory /tmp/odontogram-gif/frame3 >/tmp/frame3.log 2>&1 &
+          sleep 2
+
+      - name: Capturar quadros
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          if [ -z "$CHROME" ]; then
+            echo "Chrome/Chromium não encontrado no runner."
+            exit 1
+          fi
+
+          for frame in 1 2 3; do
+            port=$((4180 + frame))
+            "$CHROME"               --headless=new               --no-sandbox               --disable-gpu               --disable-dev-shm-usage               --hide-scrollbars               --force-device-scale-factor=1               --window-size=1180,900               --virtual-time-budget=2500               --user-data-dir="/tmp/chrome-$frame"               --screenshot="/tmp/odontogram-gif/frame$frame.png"               "http://127.0.0.1:$port/"
+          done
+
+      - name: Montar GIF
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet pillow
+          mkdir -p docs
+          python3 - <<'PY'
+          from PIL import Image
+
+          paths = [
+              "/tmp/odontogram-gif/frame1.png",
+              "/tmp/odontogram-gif/frame2.png",
+              "/tmp/odontogram-gif/frame3.png",
+          ]
+
+          frames = [Image.open(path).convert("RGB") for path in paths]
+          frames[0].save(
+              "docs/odontograma-demo.gif",
+              save_all=True,
+              append_images=frames[1:],
+              duration=[1400, 1400, 1400],
+              loop=0,
+              optimize=True,
+          )
+          PY
+
+      - name: Publicar GIF
+        run: |
+          git add docs/odontograma-demo.gif
+          if git diff --cached --quiet; then
+            echo "GIF já está atualizado."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: atualizar demonstracao animada do odontograma"
+          git push
