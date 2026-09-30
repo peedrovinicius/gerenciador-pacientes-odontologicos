@@ -16,7 +16,7 @@ const detalheData = document.getElementById('detalhe-data');
 const STORAGE_ODONTOGRAMA = 'gerenciador-odontologico-odontograma';
 const STORAGE_TEMA = 'gerenciador-odontologico-tema';
 
-const { DEMO_PACIENTES, cloneDemo } = window.DemoPatients;
+const { cloneDemo } = window.DemoPatients;
 
 const {
     DENTES_SUPERIORES,
@@ -123,6 +123,13 @@ function criarRegistro(paciente) {
     const procedimento = document.createElement('span');
     procedimento.textContent = paciente.procedimento;
     textos.append(nome, procedimento);
+
+    if (paciente.temporario) {
+        const temporario = document.createElement('small');
+        temporario.className = 'temporary-badge';
+        temporario.textContent = 'temporário';
+        textos.appendChild(temporario);
+    }
 
     principal.append(avatar, textos);
 
