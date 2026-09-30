@@ -1,20 +1,33 @@
 function validatePaciente(body) {
-    const nome = typeof body?.nome === 'string' ? body.nome.trim() : '';
-    const procedimento = typeof body?.procedimento === 'string'
-        ? body.procedimento.trim()
-        : '';
+    const nomeValido = typeof body?.nome === 'string';
+    const procedimentoValido = typeof body?.procedimento === 'string';
 
-    if (!nome || !procedimento) {
+    const nome = nomeValido ? body.nome.trim() : '';
+    const procedimento = procedimentoValido ? body.procedimento.trim() : '';
+
+    const camposObrigatorios = [];
+
+    if (!nome) camposObrigatorios.push('nome');
+    if (!procedimento) camposObrigatorios.push('procedimento');
+
+    if (camposObrigatorios.length) {
         return {
             valid: false,
             error: 'Nome e procedimento são obrigatórios.',
+            fields: camposObrigatorios,
         };
     }
 
-    if (nome.length > 120 || procedimento.length > 200) {
+    const camposAcimaDoLimite = [];
+
+    if (nome.length > 120) camposAcimaDoLimite.push('nome');
+    if (procedimento.length > 200) camposAcimaDoLimite.push('procedimento');
+
+    if (camposAcimaDoLimite.length) {
         return {
             valid: false,
             error: 'Nome ou procedimento excede o tamanho permitido.',
+            fields: camposAcimaDoLimite,
         };
     }
 
