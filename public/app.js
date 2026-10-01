@@ -15,6 +15,7 @@ const detalheData = document.getElementById('detalhe-data');
 
 const STORAGE_ODONTOGRAMA = 'gerenciador-odontologico-odontograma';
 const STORAGE_TEMA = 'gerenciador-odontologico-tema';
+const EXECUCAO_ESTATICA = window.location.hostname.endsWith('.github.io');
 
 const { cloneDemo, MAX_REGISTROS_DEMO } = window.DemoPatients;
 
@@ -34,7 +35,7 @@ const {
 
 let pacienteEmEdicao = null;
 let pacientesCache = [];
-let modoLocal = false;
+let modoLocal = EXECUCAO_ESTATICA;
 let odontograma = carregarOdontograma();
 let denteSelecionado = 16;
 
@@ -304,6 +305,13 @@ function carregarPacientesLocais() {
 }
 
 async function carregarPacientes() {
+    if (EXECUCAO_ESTATICA) {
+        pacientesCache = carregarPacientesLocais();
+        aplicarBusca();
+        renderizarDashboard(pacientesCache);
+        return;
+    }
+
     try {
         const resposta = await fetch('/api/pacientes', {
             headers: { Accept: 'application/json' },
