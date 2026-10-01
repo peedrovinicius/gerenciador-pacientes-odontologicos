@@ -21,6 +21,7 @@ Validação principal:
 ```bash
 npm ci
 node --check server.js
+npm run lint
 npm test
 npm audit --omit=dev --audit-level=high
 ```
@@ -44,5 +45,7 @@ Inclua no PR:
 - testes executados;
 - impacto no contrato da API, quando houver;
 - evidência visual apenas quando a mudança afetar a interface.
+
+A auditoria de acessibilidade com Lighthouse é executada automaticamente no CI em quatro estados da interface: visão geral, pacientes, odontograma e tema escuro.
 
 Mudanças pequenas e bem delimitadas são preferíveis a PRs muito amplos.
