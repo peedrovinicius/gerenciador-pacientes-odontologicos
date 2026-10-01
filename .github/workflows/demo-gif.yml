@@ -6,6 +6,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: odontogram-demo-gif
+  cancel-in-progress: true
+
 jobs:
   gif:
     runs-on: ubuntu-latest
@@ -121,4 +125,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: atualizar demonstracao animada do odontograma"
+          git pull --rebase origin main
           git push
