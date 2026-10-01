@@ -1,10 +1,6 @@
 name: Atualizar screenshots do README
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/screenshots.yml"
   workflow_dispatch:
 
 permissions:
