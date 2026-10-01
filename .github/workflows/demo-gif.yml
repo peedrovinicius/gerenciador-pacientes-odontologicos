@@ -1,10 +1,6 @@
 name: Gerar GIF do odontograma
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/demo-gif.yml"
   workflow_dispatch:
 
 permissions:
