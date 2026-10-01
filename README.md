@@ -6,7 +6,8 @@
 
 Aplicação web para gestão demonstrativa de registros odontológicos fictícios, com API REST em Node.js e Express, odontograma FDI interativo, validação, testes automatizados, controles de segurança e CI/CD.
 
-**Demo:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/
+**Demo:** https://peedrovinicius.github.io/gerenciador-pacientes-odontologicos/  
+**Versão estável:** [v1.1.0](https://github.com/peedrovinicius/gerenciador-pacientes-odontologicos/releases/tag/v1.1.0)
 
 > Ambiente público de demonstração. Use somente dados fictícios.
 
@@ -275,7 +276,6 @@ O workflow de CI executa `npm ci`, verificação de sintaxe, ESLint, testes auto
 ├── eslint.config.js
 ├── package.json
 ├── package-lock.json
-├── render.yaml
 ├── server.js
 └── README.md
 ```
