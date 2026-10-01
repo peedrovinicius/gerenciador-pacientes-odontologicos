@@ -113,7 +113,7 @@ O arquivo `public/demo-patients.js` é compartilhado pela interface estática e 
 
 ### GitHub Pages
 
-A demo principal é totalmente estática. Ela inicia com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições somente na memória da página.
+A demo principal é totalmente estática. A interface detecta o ambiente do GitHub Pages e ativa diretamente o modo demonstrativo, sem tentar chamar uma API inexistente. Ela inicia com os mesmos 12 pacientes fictícios e mantém novos cadastros ou edições somente na memória da página.
 
 Ao recarregar ou reabrir:
 
@@ -239,7 +239,7 @@ A suíte cobre:
 - compatibilidade com formato legado do estado do odontograma;
 - anatomia visual e nomenclatura FDI.
 
-O workflow de CI executa `npm ci`, verificação de sintaxe, ESLint, testes automatizados, auditoria de acessibilidade com Lighthouse e `npm audit --omit=dev --audit-level=high`. A auditoria exige pontuação mínima de 95 em acessibilidade. O deploy do GitHub Pages é iniciado somente após a conclusão bem-sucedida do CI.
+O workflow de CI executa `npm ci`, verificação de sintaxe, ESLint, testes automatizados, auditoria de acessibilidade com Lighthouse e `npm audit --omit=dev --audit-level=high`. O Lighthouse verifica visão geral, pacientes, odontograma e tema escuro, com pontuação mínima de 95 em cada estado. O deploy do GitHub Pages não possui atalho manual e é iniciado somente após a conclusão bem-sucedida do CI.
 
 ## Estrutura
 
