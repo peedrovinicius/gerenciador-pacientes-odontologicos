@@ -6,6 +6,7 @@ Descreva o problema e a alteração realizada.
 
 - [ ] `npm ci`
 - [ ] `node --check server.js`
+- [ ] `npm run lint`
 - [ ] `npm test`
 - [ ] `npm audit --omit=dev --audit-level=high`
 
@@ -20,4 +21,5 @@ Informe se a mudança afeta API, validação, segurança ou interface.
 - [ ] validação de entrada e limite de payload continuam ativos;
 - [ ] nenhum conteúdo da API foi inserido com `innerHTML`;
 - [ ] cabeçalhos de segurança existentes foram preservados;
+- [ ] acessibilidade e navegação por teclado não regrediram;
 - [ ] a aplicação continua sendo uma demonstração técnica, não um sistema clínico de produção.
