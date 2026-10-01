@@ -583,7 +583,7 @@ button:focus-visible, input:focus-visible {
   padding: 8px 10px;
   border-radius: 999px;
   background: #ebe4da;
-  color: #756d64;
+  color: #5f5851;
   font-size: .7rem;
   font-weight: 760;
 }
@@ -705,7 +705,7 @@ form {
 
 .privacy-note span {
   margin-top: 3px;
-  color: #8a7277;
+  color: #66575a;
   font-size: .71rem;
 }
 
@@ -1027,6 +1027,18 @@ body.dark-theme .count-pill {
   color: #d1c8be;
 }
 
+body.dark-theme .nav-item {
+  color: #d1c8be;
+}
+
+body.dark-theme .nav-item.active {
+  color: #fff;
+}
+
+body.dark-theme .primary-button {
+  background: var(--wine-dark);
+}
+
 body.dark-theme .brand small,
 body.dark-theme .status-dot,
 body.dark-theme .intro-copy,
@@ -1052,7 +1064,7 @@ body.dark-theme .board-heading {
 
 body.dark-theme .board-heading span,
 body.dark-theme .metric-stack article > small,
-body.dark-theme .board-label { color: #837a70; }
+body.dark-theme .board-label { color: #665f58; }
 
 body.dark-theme .metric-stack article {
   border-color: rgba(39,39,35,.10);
@@ -1374,7 +1386,7 @@ body.dark-theme .brand-logo-image {
 
 .tooth-detail-copy p {
   margin: 0;
-  color: #7a7168;
+  color: #675f58;
   font-size: .74rem;
   line-height: 1.55;
 }
