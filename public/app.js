@@ -459,9 +459,10 @@ function criarDente(numero) {
     const botao = document.createElement('button');
     botao.type = 'button';
     botao.className = `tooth-button ${registro.status} ${numero === denteSelecionado ? 'selected' : ''}`;
+    const rotuloVisivel = `${numero}${registro.condicao ? ` ${condicao.label}` : ''}`;
     botao.setAttribute(
         'aria-label',
-        `Dente ${numero}, ${nomeStatus(registro.status)}${registro.condicao ? `, ${condicao.label}` : ''}`,
+        `${rotuloVisivel}. ${nomeAnatomicoDente(numero)}, ${nomeStatus(registro.status)}`,
     );
     botao.setAttribute('aria-pressed', numero === denteSelecionado ? 'true' : 'false');
 
