@@ -26,18 +26,22 @@ jobs:
             exit 0
           fi
 
+          cat > /tmp/release-notes.md <<'EOF'
+          Versão estável da demonstração odontológica.
+
+          Principais melhorias:
+          - odontograma FDI interativo com 32 dentes;
+          - base fixa de pacientes fictícios e alterações temporárias;
+          - API REST Node.js/Express com contrato padronizado de erros;
+          - CSP, Permissions-Policy e demais cabeçalhos de segurança;
+          - limite de payload e de registros da demonstração;
+          - ESLint, 27 testes automatizados e npm audit sem vulnerabilidades;
+          - Lighthouse 100/100 em visão geral, pacientes, odontograma e tema escuro;
+          - deploy do GitHub Pages condicionado ao CI verde;
+          - README com arquitetura, screenshots e demonstração animada.
+          EOF
+
           gh release create v1.1.0 \
             --target main \
             --title "Versão 1.1.0" \
-            --notes "Versão estável da demonstração odontológica.
-
-Principais melhorias:
-- odontograma FDI interativo com 32 dentes;
-- base fixa de pacientes fictícios e alterações temporárias;
-- API REST Node.js/Express com contrato padronizado de erros;
-- CSP, Permissions-Policy e demais cabeçalhos de segurança;
-- limite de payload e de registros da demonstração;
-- ESLint, 27 testes automatizados e npm audit sem vulnerabilidades;
-- Lighthouse 100/100 em visão geral, pacientes, odontograma e tema escuro;
-- deploy do GitHub Pages condicionado ao CI verde;
-- README com arquitetura, screenshots e demonstração animada."
+            --notes-file /tmp/release-notes.md
