@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -33,32 +36,105 @@ jobs:
 
       - name: Accessibility audit
         run: |
-          npm start >/tmp/gerenciador.log 2>&1 &
-          APP_PID=$!
-          sleep 3
-          npx --yes lighthouse@12 http://127.0.0.1:3000             --only-categories=accessibility             --chrome-flags="--headless --no-sandbox --disable-gpu"             --output=json             --output-path=/tmp/lighthouse.json             --quiet
-          kill $APP_PID || true
-          node - <<'NODE'
-          const report = require('/tmp/lighthouse.json');
-          const score = report.categories.accessibility.score;
-          const refs = new Set(report.categories.accessibility.auditRefs.map((item) => item.id));
-          const failed = Object.entries(report.audits)
-              .filter(([id, audit]) => refs.has(id) && audit.score !== null && audit.score < 1)
-              .map(([id, audit]) => ({ id, audit }));
+          set -euo pipefail
 
-          console.log(`Accessibility score: ${Math.round(score * 100)}`);
-          if (failed.length) {
-              console.log('Auditorias com observações:');
-              failed.forEach(({ id, audit }) => {
+          rm -rf /tmp/a11y
+          for state in dashboard pacientes odontograma dark; do
+            mkdir -p "/tmp/a11y/$state"
+            cp -R public/. "/tmp/a11y/$state/"
+          done
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def activate_view(root, view):
+              path = root / "index.html"
+              html = path.read_text(encoding="utf-8")
+
+              html = html.replace(
+                  '<button class="nav-item active" data-view="dashboard" type="button" aria-current="page" aria-controls="view-dashboard">Visão geral</button>',
+                  '<button class="nav-item" data-view="dashboard" type="button" aria-controls="view-dashboard">Visão geral</button>',
+              )
+              html = html.replace(
+                  f'<button class="nav-item" data-view="{view}" type="button" aria-controls="view-{view}">',
+                  f'<button class="nav-item active" data-view="{view}" type="button" aria-current="page" aria-controls="view-{view}">',
+              )
+              html = html.replace(
+                  '<section id="view-dashboard" class="view active"',
+                  '<section id="view-dashboard" class="view"',
+              )
+              html = html.replace(
+                  f'<section id="view-{view}" class="view">',
+                  f'<section id="view-{view}" class="view active">',
+              )
+              path.write_text(html, encoding="utf-8")
+
+          for state in ("dashboard", "pacientes", "odontograma", "dark"):
+              app = Path("/tmp/a11y") / state / "app.js"
+              text = app.read_text(encoding="utf-8")
+              text = text.replace(
+                  "const EXECUCAO_ESTATICA = window.location.hostname.endsWith('.github.io');",
+                  "const EXECUCAO_ESTATICA = true;",
+              )
+              if state == "dark":
+                  text = text.replace(
+                      "const tema = localStorage.getItem(STORAGE_TEMA);",
+                      "const tema = 'dark';",
+                  )
+              app.write_text(text, encoding="utf-8")
+
+          activate_view(Path("/tmp/a11y/pacientes"), "pacientes")
+          activate_view(Path("/tmp/a11y/odontograma"), "odontograma")
+          PY
+
+          python3 -m http.server 4173 --directory /tmp/a11y/dashboard >/tmp/a11y-dashboard.log 2>&1 &
+          P1=$!
+          python3 -m http.server 4174 --directory /tmp/a11y/pacientes >/tmp/a11y-pacientes.log 2>&1 &
+          P2=$!
+          python3 -m http.server 4175 --directory /tmp/a11y/odontograma >/tmp/a11y-odontograma.log 2>&1 &
+          P3=$!
+          python3 -m http.server 4176 --directory /tmp/a11y/dark >/tmp/a11y-dark.log 2>&1 &
+          P4=$!
+          trap 'kill $P1 $P2 $P3 $P4 2>/dev/null || true' EXIT
+          sleep 2
+
+          for item in dashboard:4173 pacientes:4174 odontograma:4175 dark:4176; do
+            name="${item%%:*}"
+            port="${item##*:}"
+            npx --yes lighthouse@12 "http://127.0.0.1:$port" \
+              --only-categories=accessibility \
+              --chrome-flags="--headless --no-sandbox --disable-gpu" \
+              --output=json \
+              --output-path="/tmp/lighthouse-$name.json" \
+              --quiet
+          done
+
+          node - <<'NODE'
+          const states = ['dashboard', 'pacientes', 'odontograma', 'dark'];
+          let failed = false;
+
+          for (const state of states) {
+              const report = require(`/tmp/lighthouse-${state}.json`);
+              const score = report.categories.accessibility.score;
+              const refs = new Set(report.categories.accessibility.auditRefs.map((item) => item.id));
+              const observations = Object.entries(report.audits)
+                  .filter(([id, audit]) => refs.has(id) && audit.score !== null && audit.score < 1)
+                  .map(([id, audit]) => ({ id, audit }));
+
+              console.log(`Accessibility ${state}: ${Math.round(score * 100)}`);
+
+              for (const { id, audit } of observations) {
                   console.log(`- ${audit.title}: ${audit.displayValue || 'revisar'}`);
                   const selectors = (audit.details?.items || [])
                       .map((item) => item.node?.selector)
                       .filter(Boolean);
                   selectors.slice(0, 8).forEach((selector) => console.log(`  ${id}: ${selector}`));
-              });
+              }
+
+              if (score < 0.95) failed = true;
           }
 
-          if (score < 0.95) process.exit(1);
+          if (failed) process.exit(1);
           NODE
 
       - name: Audit production dependencies
