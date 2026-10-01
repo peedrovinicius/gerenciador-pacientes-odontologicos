@@ -1039,6 +1039,12 @@ body.dark-theme .primary-button {
   background: var(--wine-dark);
 }
 
+body.dark-theme .avatar {
+  background: #3a2429;
+  color: #f2c3ca;
+  border-color: #6a3c45;
+}
+
 body.dark-theme .brand small,
 body.dark-theme .status-dot,
 body.dark-theme .intro-copy,
