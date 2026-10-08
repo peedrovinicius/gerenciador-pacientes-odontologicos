@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: odontogram-demo-gif
@@ -114,7 +115,9 @@ jobs:
           )
           PY
 
-      - name: Publicar GIF
+      - name: Abrir pull request do GIF
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git add docs/odontograma-demo.gif
           if git diff --cached --quiet; then
@@ -125,5 +128,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: atualizar demonstracao animada do odontograma"
-          git pull --rebase origin main
-          git push
+          BRANCH="automation/odontograma-gif-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git push origin "HEAD:${BRANCH}"
+          gh pr create \
+            --base main \
+            --head "${BRANCH}" \
+            --title "docs: atualizar demonstracao animada do odontograma" \
+            --body "Atualização automática do GIF do odontograma gerada pelo GitHub Actions."
