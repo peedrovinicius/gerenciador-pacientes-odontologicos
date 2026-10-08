@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
   pull-requests: write
 
 concurrency:
@@ -135,3 +136,5 @@ jobs:
             --head "${BRANCH}" \
             --title "docs: atualizar demonstracao animada do odontograma" \
             --body "Atualização automática do GIF do odontograma gerada pelo GitHub Actions."
+          gh workflow run ci.yml --ref "${BRANCH}"
+          gh workflow run codeql.yml --ref "${BRANCH}"
