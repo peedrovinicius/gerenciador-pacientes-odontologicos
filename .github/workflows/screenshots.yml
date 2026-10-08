@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: readme-screenshots
@@ -68,7 +69,9 @@ jobs:
 
           "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --hide-scrollbars             --force-device-scale-factor=1             --window-size=1440,1100             --virtual-time-budget=2500             --screenshot="$GITHUB_WORKSPACE/docs/screenshots/odontograma.png"             http://127.0.0.1:4174/
 
-      - name: Publicar screenshots atualizados
+      - name: Abrir pull request dos screenshots
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git add docs/screenshots
           if git diff --cached --quiet; then
@@ -79,5 +82,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: atualizar screenshots da interface"
-          git pull --rebase origin main
-          git push
+          BRANCH="automation/readme-screenshots-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git push origin "HEAD:${BRANCH}"
+          gh pr create \
+            --base main \
+            --head "${BRANCH}" \
+            --title "docs: atualizar screenshots da interface" \
+            --body "Atualização automática dos screenshots do README gerada pelo GitHub Actions."
