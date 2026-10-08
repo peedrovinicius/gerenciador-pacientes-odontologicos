@@ -12,7 +12,7 @@
     "node": ">=24 <25"
   },
   "dependencies": {
-    "express": "4.22.3"
+    "express": "5.2.1"
   },
   "devDependencies": {
     "eslint": "^9.39.1"
